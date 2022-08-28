@@ -3,7 +3,7 @@ import SwiftUI
 public class TimelineItem: ObservableObject {
     var id: String
     var name: String
-    @Published var date: Date
+    @Published public var date: Date
     var duration: TimeInterval?
     var type: TimelineItemType
     var itemShouldBeHighlighted: Bool
