@@ -6,6 +6,8 @@ public protocol TimelineDelegate {
     func didTapInterval(between item1: TimelineItem, and item2: TimelineItem)
 }
 
+let TimelineTrackWidth: CGFloat = 70
+
 public struct Timeline: View {
 
     @Environment(\.colorScheme) var colorScheme
@@ -28,11 +30,16 @@ public struct Timeline: View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(sortedItems, id: \.self.id) { item in
-                    Button {
-                        self.delegate?.didTapItem(item)
-                    } label: {
-                        cell(for: item)
-                        optionalConnector(for: item)
+                    VStack(spacing: 0) {
+                        Button {
+                            self.delegate?.didTapItem(item)
+                        } label: {
+                            cell(for: item)
+                        }
+                        HStack {
+                            optionalConnector(for: item)
+                            Spacer()
+                        }
                     }
                 }
             }
@@ -89,6 +96,7 @@ public struct Timeline: View {
                 }
             }
         }
+        .frame(width: TimelineTrackWidth)
     }
     
     func cell(for item: TimelineItem) -> some View {
@@ -127,9 +135,11 @@ public struct Timeline: View {
         
         return HStack(alignment: .top) {
             icon
-                .padding(.leading)
+                .frame(width: TimelineTrackWidth)
             title
+            Spacer()
         }
+        .frame(maxWidth: .infinity)
     }
     
     var allItems: [TimelineItem] {
