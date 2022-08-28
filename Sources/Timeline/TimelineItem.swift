@@ -6,16 +6,16 @@ public class TimelineItem: ObservableObject {
     @Published public var date: Date
     var duration: TimeInterval?
     var type: TimelineItemType
-    public var itemShouldBeHighlighted: Bool
+    public var isNew: Bool
     var isEmptyItem: Bool
     
-    public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, type: TimelineItemType = .meal, itemShouldBeHighlighted: Bool = false, isEmptyItem: Bool = false) {
+    public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, type: TimelineItemType = .meal, isNew: Bool = false, isEmptyItem: Bool = false) {
         self.id = id ?? UUID().uuidString
         self.name = name
         self.date = date
         self.duration = duration
         self.type = type
-        self.itemShouldBeHighlighted = itemShouldBeHighlighted
+        self.isNew = isNew
         self.isEmptyItem = isEmptyItem
     }
     

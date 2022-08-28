@@ -129,13 +129,13 @@ public struct Timeline: View {
     func cell(for item: TimelineItem) -> some View {
         
         var foregroundColor: Color {
-            item.itemShouldBeHighlighted ? Color.accentColor : Color(.tertiarySystemGroupedBackground)
-//            item.itemShouldBeHighlighted ? Color(.secondaryLabel) : Color(.tertiarySystemGroupedBackground)
+            item.isNew ? Color.accentColor : Color(.tertiarySystemGroupedBackground)
+//            item.isNew ? Color(.secondaryLabel) : Color(.tertiarySystemGroupedBackground)
         }
         
         var labelColor: Color {
-//            item.itemShouldBeHighlighted ? Color(.secondarySystemGroupedBackground) : Color(.tertiaryLabel)
-            item.itemShouldBeHighlighted ? Color.white : Color(.tertiaryLabel)
+//            item.isNew ? Color(.secondarySystemGroupedBackground) : Color(.tertiaryLabel)
+            item.isNew ? Color.white : Color(.tertiaryLabel)
         }
         
         var icon: some View {
@@ -154,14 +154,14 @@ public struct Timeline: View {
                 Text(item.date.shortTime)
                     .font(.subheadline)
 //                    .foregroundColor(Color(.secondaryLabel))
-                    .foregroundColor(item.itemShouldBeHighlighted ? Color.accentColor : Color(.secondaryLabel))
+                    .foregroundColor(item.isNew ? Color.accentColor : Color(.secondaryLabel))
                 HStack {
                     Text("\(item.name)")
 //                        .foregroundColor(Color(.label))
-                        .foregroundColor(item.itemShouldBeHighlighted ? Color.accentColor : Color(.label))
-                        .bold(item.itemShouldBeHighlighted)
+                        .foregroundColor(item.isNew ? Color.accentColor : Color(.label))
+                        .bold(item.isNew)
                        .font(.title3)
-                    if item.itemShouldBeHighlighted {
+                    if item.isNew {
                         Text("NEW")
                             .font(.footnote)
                             .bold()
