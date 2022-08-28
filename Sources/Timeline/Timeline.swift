@@ -76,12 +76,15 @@ public struct Timeline: View {
         func timeIntervalView(for timeInterval: TimeInterval) -> some View {
             VStack(spacing: 0) {
                 Text(timeInterval.shortStringTime)
+//                    .font(.headline)
                     .font(.subheadline)
+//                    .foregroundColor(Color.white)
                     .foregroundColor(Color(.secondaryLabel))
-                    .padding(7)
+                    .padding(.horizontal, 7)
+                    .frame(minWidth: 44, minHeight: 44)
                     .background(
                         Capsule()
-//                                .foregroundColor(Color(.tertiarySystemGroupedBackground))
+//                            .foregroundColor(Color.accentColor)
                             .foregroundColor(colorScheme == .dark ? Color(.systemGray3) : Color(.systemGray5))
                     )
                 connector
@@ -92,7 +95,14 @@ public struct Timeline: View {
             if let timeInterval = timeInterval(for: item) {
                 connector
                 if timeInterval > 60 {
-                    timeIntervalView(for: timeInterval)
+                    Button {
+                        guard let nextItem = nextItem(to: item) else {
+                            return
+                        }
+                        delegate?.didTapInterval(between: item, and: nextItem)
+                    } label: {
+                        timeIntervalView(for: timeInterval)
+                    }
                 }
             }
         }
@@ -103,9 +113,11 @@ public struct Timeline: View {
         
         var foregroundColor: Color {
             item.itemShouldBeHighlighted ? Color.accentColor : Color(.tertiarySystemGroupedBackground)
+//            item.itemShouldBeHighlighted ? Color(.secondaryLabel) : Color(.tertiarySystemGroupedBackground)
         }
         
         var labelColor: Color {
+//            item.itemShouldBeHighlighted ? Color(.secondarySystemGroupedBackground) : Color(.tertiaryLabel)
             item.itemShouldBeHighlighted ? Color.white : Color(.tertiaryLabel)
         }
         
@@ -121,14 +133,30 @@ public struct Timeline: View {
         }
         
         var title: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 3) {
                 Text(item.date.shortTime)
                     .font(.subheadline)
+//                    .foregroundColor(Color(.secondaryLabel))
                     .foregroundColor(item.itemShouldBeHighlighted ? Color.accentColor : Color(.secondaryLabel))
-                Text("\(item.name)")
-                    .foregroundColor(item.itemShouldBeHighlighted ? Color.accentColor : Color(.label))
-                    .bold(item.itemShouldBeHighlighted)
-                   .font(.title3)
+                HStack {
+                    Text("\(item.name)")
+//                        .foregroundColor(Color(.label))
+                        .foregroundColor(item.itemShouldBeHighlighted ? Color.accentColor : Color(.label))
+                        .bold(item.itemShouldBeHighlighted)
+                       .font(.title3)
+                    if item.itemShouldBeHighlighted {
+                        Text("NEW")
+                            .font(.footnote)
+                            .bold()
+                            .foregroundColor(Color(.secondaryLabel))
+                            .padding(.vertical, 4)
+                            .padding(.horizontal, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .foregroundColor(Color(.tertiarySystemGroupedBackground))
+                            )
+                    }
+                }
             }
             .padding(.leading)
         }
