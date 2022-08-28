@@ -6,7 +6,7 @@ public class TimelineItem: ObservableObject {
     @Published public var date: Date
     var duration: TimeInterval?
     var type: TimelineItemType
-    var itemShouldBeHighlighted: Bool
+    public var itemShouldBeHighlighted: Bool
     var isEmptyItem: Bool
     
     public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, type: TimelineItemType = .meal, itemShouldBeHighlighted: Bool = false, isEmptyItem: Bool = false) {
