@@ -8,6 +8,13 @@ public protocol TimelineDelegate {
     func shouldRegisterTapsOnIntervals() -> Bool
 }
 
+extension TimelineDelegate {
+    func didTapItem(_ item: TimelineItem) { }
+    func didTapInterval(between item1: TimelineItem, and item2: TimelineItem) { }
+    func shouldRegisterTapsOnItems() -> Bool { false }
+    func shouldRegisterTapsOnIntervals() -> Bool { false }
+}
+
 let TimelineTrackWidth: CGFloat = 70
 
 public struct Timeline: View {
