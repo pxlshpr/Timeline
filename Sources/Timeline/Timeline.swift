@@ -14,7 +14,7 @@ public struct Timeline: View {
     @ObservedObject var newMeal: TimelineItem
     var delegate: TimelineDelegate?
     
-    init(items: [TimelineItem], newMeal: TimelineItem? = nil, delegate: TimelineDelegate? = nil) {
+    public init(items: [TimelineItem], newMeal: TimelineItem? = nil, delegate: TimelineDelegate? = nil) {
         self.items = items
         self.delegate = delegate
         self.newMeal = newMeal ?? TimelineItem.emptyMeal
