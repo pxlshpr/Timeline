@@ -4,6 +4,8 @@ import SwiftSugar
 public protocol TimelineDelegate {
     func didTapItem(_ item: TimelineItem)
     func didTapInterval(between item1: TimelineItem, and item2: TimelineItem)
+    func shouldRegisterTapsOnItems() -> Bool
+    func shouldRegisterTapsOnIntervals() -> Bool
 }
 
 let TimelineTrackWidth: CGFloat = 70
@@ -31,9 +33,13 @@ public struct Timeline: View {
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(sortedItems, id: \.self.id) { item in
                     VStack(spacing: 0) {
-                        Button {
-                            self.delegate?.didTapItem(item)
-                        } label: {
+                        if let delegate = delegate, delegate.shouldRegisterTapsOnItems() {
+                            Button {
+                                delegate.didTapItem(item)
+                            } label: {
+                                cell(for: item)
+                            }
+                        } else {
                             cell(for: item)
                         }
                         HStack {
@@ -95,12 +101,16 @@ public struct Timeline: View {
             if let timeInterval = timeInterval(for: item) {
                 connector
                 if timeInterval > 60 {
-                    Button {
-                        guard let nextItem = nextItem(to: item) else {
-                            return
+                    if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals() {
+                        Button {
+                            guard let nextItem = nextItem(to: item) else {
+                                return
+                            }
+                            delegate.didTapInterval(between: item, and: nextItem)
+                        } label: {
+                            timeIntervalView(for: timeInterval)
                         }
-                        delegate?.didTapInterval(between: item, and: nextItem)
-                    } label: {
+                    } else {
                         timeIntervalView(for: timeInterval)
                     }
                 }
