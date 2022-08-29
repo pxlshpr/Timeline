@@ -1,6 +1,25 @@
 import SwiftUI
 import SwiftSugar
 
+extension TimelineItem: Equatable {
+    public static func ==(lhs: TimelineItem, rhs: TimelineItem) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+}
+
+extension TimelineItem: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(date)
+        hasher.combine(isNew)
+        hasher.combine(id)
+        hasher.combine(name)
+        hasher.combine(duration)
+        hasher.combine(type)
+        hasher.combine(isEmptyItem)
+        hasher.combine(groupedWorkouts)
+    }
+}
+
 public struct Timeline: View {
 
     @Environment(\.colorScheme) var colorScheme
@@ -13,18 +32,36 @@ public struct Timeline: View {
         self.items = items.groupingWorkouts
         self.delegate = delegate
         self.newMeal = newMeal ?? TimelineItem.emptyMeal
+        self.sortedItems = allSortedItems
     }
     
     public var body: some View {
         scrollView
+            .onChange(of: newMeal) { newValue in
+                sortedItems = allSortedItems
+            }
     }
 
     //MARK: - UI Components
     
+    //TODO: We need to create a @Published sortedItems, store it on init and update it whenever newMeal changes, and bind to that using this https://stackoverflow.com/a/67893029
+    @State var sortedItems: [TimelineItem] = []
+    
+    var allItems: [TimelineItem] {
+        guard !newMeal.isEmptyItem else {
+            return items
+        }
+        return items + [newMeal]
+    }
+    
+    var allSortedItems: [TimelineItem] {
+        allItems.sortedByDate
+    }
+    
     var scrollView: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(sortedItems, id: \.self.id) { item in
+                ForEach($sortedItems, id: \.self.id) { $item in
                     VStack(spacing: 0) {
                         if let delegate = delegate, delegate.shouldRegisterTapsOnItems() {
                             Button {
@@ -93,17 +130,6 @@ public struct Timeline: View {
     }
     
     //MARK: - Helpers
-    
-    var allItems: [TimelineItem] {
-        guard !newMeal.isEmptyItem else {
-            return items
-        }
-        return items + [newMeal]
-    }
-    
-    var sortedItems: [TimelineItem] {
-        allItems.sortedByDate
-    }
     
     func nextItem(to item: TimelineItem) -> TimelineItem? {
         guard let index = sortedItems.firstIndex(where: { $0.id == item.id }),
