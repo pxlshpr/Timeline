@@ -69,10 +69,10 @@ extension Array where Element == TimelineItem {
             /// check if the next workout down the list is within 15 minutes of its end
             var nextWorkout: TimelineItem? = nil
             repeat {
-                if let workoutWithIndex = workoutItemDirectlyAfter(nextWorkout ?? item) {
-                    nextWorkout = workoutWithIndex.item
-                    groupedItemIndices.append(workoutWithIndex.index)
-                    item.groupWorkout(item)
+                if let nextWorkoutIndex = sorted.indexOfWorkoutItemDirectlyAfter(nextWorkout ?? item) {
+                    item.groupWorkout(sorted[nextWorkoutIndex])
+                    nextWorkout = sorted[nextWorkoutIndex]
+                    groupedItemIndices.append(nextWorkoutIndex)
                 } else {
                     nextWorkout = nil
                 }
@@ -85,7 +85,7 @@ extension Array where Element == TimelineItem {
         return grouped
     }
     
-    func workoutItemDirectlyAfter(_ item: TimelineItem) -> (item: TimelineItem, index: Int)? {
+    func indexOfWorkoutItemDirectlyAfter(_ item: TimelineItem) -> Int? {
         guard let index = firstIndex(where: { $0.id == item.id}), item.type == .workout, let endTime = item.endTime else {
             return nil
         }
@@ -98,7 +98,7 @@ extension Array where Element == TimelineItem {
             guard abs(endTime.timeIntervalSince(self[i].date)) <= (15 * 60) else {
                 return nil
             }
-            return (self[i], i)
+            return i
         }
         return nil
     }
