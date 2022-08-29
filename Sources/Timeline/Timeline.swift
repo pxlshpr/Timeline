@@ -23,12 +23,8 @@ extension TimelineItem: Hashable {
 extension Timeline {
     class ViewModel: ObservableObject {
         var items: [TimelineItem]
-        @Published var sortedItems: [TimelineItem] = []
-        @Published var newMeal: TimelineItem {
-            didSet {
-                self.sortedItems = allSortedItems
-            }
-        }
+        var sortedItems: [TimelineItem] = []
+        @Published var newMeal: TimelineItem
         
         init(items: [TimelineItem], newMeal: TimelineItem? = nil) {
 //            self.items = items
@@ -43,6 +39,10 @@ extension Timeline {
 }
 
 extension Timeline.ViewModel {
+    func recreateSortedItems() {
+        self.sortedItems = allSortedItems
+    }
+    
     var allItems: [TimelineItem] {
         guard !newMeal.isEmptyItem else {
             return items
@@ -53,6 +53,13 @@ extension Timeline.ViewModel {
     var allSortedItems: [TimelineItem] {
         allItems.sortedByDate
     }
+    
+    var allSortedItemViewModels: [TimelineItemCell.ViewModel] {
+        allItems.sortedByDate.map {
+            TimelineItemCell.ViewModel(item: $0)
+        }
+    }
+
 }
 
 public struct Timeline: View {
@@ -78,8 +85,11 @@ public struct Timeline: View {
     
     public var body: some View {
         scrollView
-            .onChange(of: newMeal) { newValue in
-                viewModel.newMeal = newValue
+            .onChange(of: newMeal.date) { newValue in
+                viewModel.newMeal.date = newValue
+                print("We're here")
+//                viewModel.newMeal = newValue
+//                viewModel.recreateSortedItems()
 //                sortedItems = allSortedItems
             }
     }
@@ -89,7 +99,7 @@ public struct Timeline: View {
     var scrollView: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach($viewModel.sortedItems, id: \.self.id) { $item in
+                ForEach(viewModel.allSortedItems, id: \.self.id) { item in
                     VStack(spacing: 0) {
                         if let delegate = delegate, delegate.shouldRegisterTapsOnItems() {
                             Button {
@@ -99,6 +109,7 @@ public struct Timeline: View {
                             }
                         } else {
                             TimelineItemCell(item)
+//                                .id(item.hashValue)
                         }
                         HStack {
                             optionalConnector(for: item)
