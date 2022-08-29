@@ -20,33 +20,29 @@ extension TimelineItem: Hashable {
     }
 }
 
-public struct Timeline: View {
-
-    @Environment(\.colorScheme) var colorScheme
-    
-    var items: [TimelineItem]
-    @ObservedObject var newMeal: TimelineItem
-    var delegate: TimelineDelegate?
-    
-    public init(items: [TimelineItem], newMeal: TimelineItem? = nil, delegate: TimelineDelegate? = nil) {
-        self.items = items.groupingWorkouts
-        self.delegate = delegate
-        self.newMeal = newMeal ?? TimelineItem.emptyMeal
-        self.sortedItems = allSortedItems
-    }
-    
-    public var body: some View {
-        scrollView
-            .onChange(of: newMeal) { newValue in
-                sortedItems = allSortedItems
+extension Timeline {
+    class ViewModel: ObservableObject {
+        var items: [TimelineItem]
+        @Published var sortedItems: [TimelineItem] = []
+        @Published var newMeal: TimelineItem {
+            didSet {
+                self.sortedItems = allSortedItems
             }
+        }
+        
+        init(items: [TimelineItem], newMeal: TimelineItem? = nil) {
+//            self.items = items
+//            self.sortedItems = sortedItems
+//            self.newMeal = newMeal
+            
+            self.items = items.groupingWorkouts
+            self.newMeal = newMeal ?? TimelineItem.emptyMeal
+            self.sortedItems = allSortedItems
+        }
     }
+}
 
-    //MARK: - UI Components
-    
-    //TODO: We need to create a @Published sortedItems, store it on init and update it whenever newMeal changes, and bind to that using this https://stackoverflow.com/a/67893029
-    @State var sortedItems: [TimelineItem] = []
-    
+extension Timeline.ViewModel {
     var allItems: [TimelineItem] {
         guard !newMeal.isEmptyItem else {
             return items
@@ -57,11 +53,43 @@ public struct Timeline: View {
     var allSortedItems: [TimelineItem] {
         allItems.sortedByDate
     }
+}
+
+public struct Timeline: View {
+
+    @Environment(\.colorScheme) var colorScheme
+    
+    @StateObject var viewModel: ViewModel
+    @ObservedObject var newMeal: TimelineItem
+    var delegate: TimelineDelegate?
+
+//    @State var sortedItems: [TimelineItem] = []
+//    var items: [TimelineItem]
+//    @ObservedObject var newMeal: TimelineItem
+    
+    public init(items: [TimelineItem], newMeal: TimelineItem? = nil, delegate: TimelineDelegate? = nil) {
+        _viewModel = StateObject(wrappedValue: ViewModel(items: items, newMeal: newMeal))
+        self.delegate = delegate
+        
+//        self.items = items.groupingWorkouts
+        self.newMeal = newMeal ?? TimelineItem.emptyMeal
+//        self.sortedItems = allSortedItems
+    }
+    
+    public var body: some View {
+        scrollView
+            .onChange(of: newMeal) { newValue in
+                viewModel.newMeal = newValue
+//                sortedItems = allSortedItems
+            }
+    }
+
+    //MARK: - UI Components
     
     var scrollView: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach($sortedItems, id: \.self.id) { $item in
+                ForEach($viewModel.sortedItems, id: \.self.id) { $item in
                     VStack(spacing: 0) {
                         if let delegate = delegate, delegate.shouldRegisterTapsOnItems() {
                             Button {
@@ -80,13 +108,6 @@ public struct Timeline: View {
                 }
             }
         }
-    }
-    
-    func timeInterval(for item: TimelineItem) -> TimeInterval? {
-        guard let nextItem = nextItem(to: item) else {
-            return nil
-        }
-        return nextItem.date.timeIntervalSince(item.date)
     }
     
     func optionalConnector(for item: TimelineItem) -> some View {
@@ -131,13 +152,20 @@ public struct Timeline: View {
     
     //MARK: - Helpers
     
+    func timeInterval(for item: TimelineItem) -> TimeInterval? {
+        guard let nextItem = nextItem(to: item) else {
+            return nil
+        }
+        return nextItem.date.timeIntervalSince(item.date)
+    }
+    
     func nextItem(to item: TimelineItem) -> TimelineItem? {
-        guard let index = sortedItems.firstIndex(where: { $0.id == item.id }),
-              index < sortedItems.count - 1
+        guard let index = viewModel.sortedItems.firstIndex(where: { $0.id == item.id }),
+              index < viewModel.sortedItems.count - 1
         else {
             return nil
         }
-        return sortedItems[index+1]
+        return viewModel.sortedItems[index+1]
     }
 }
 
