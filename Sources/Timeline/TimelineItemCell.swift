@@ -2,7 +2,7 @@ import SwiftUI
 
 extension TimelineItemCell {
     class ViewModel: ObservableObject {
-        let item: TimelineItem
+        @Published var item: TimelineItem
         init(item: TimelineItem) {
             self.item = item
         }
