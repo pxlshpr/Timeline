@@ -26,7 +26,7 @@ public struct Timeline: View {
     var delegate: TimelineDelegate?
     
     public init(items: [TimelineItem], newMeal: TimelineItem? = nil, delegate: TimelineDelegate? = nil) {
-        self.items = items
+        self.items = items.groupingWorkouts
         self.delegate = delegate
         self.newMeal = newMeal ?? TimelineItem.emptyMeal
     }
