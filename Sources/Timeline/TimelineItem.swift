@@ -31,6 +31,9 @@ public class TimelineItem: ObservableObject {
 
 extension TimelineItem {
     func groupWorkout(_ item: TimelineItem) {
+        guard !groupedWorkouts.contains(where: { $0.id == item.id }) else {
+            return
+        }
         groupedWorkouts.append(item)
     }
     
@@ -39,42 +42,6 @@ extension TimelineItem {
             return nil
         }
         return date.addingTimeInterval(duration)
-    }
-}
-
-extension TimelineItem {
-    var dateString: String {
-        guard type == .workout, let itemEndTime = endTime else {
-            return date.shortTime
-        }
-        
-        let endTime: Date
-        if let lastItemEndTime = groupedWorkouts.last?.endTime {
-            endTime = lastItemEndTime
-        } else {
-            endTime = itemEndTime
-        }
-        
-        return "\(date.shortTime) – \(endTime.shortTime)"
-    }
-}
-
-extension TimelineItem: Equatable {
-    public static func ==(lhs: TimelineItem, rhs: TimelineItem) -> Bool {
-        lhs.hashValue == rhs.hashValue
-    }
-}
-
-extension TimelineItem: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(date)
-        hasher.combine(isNew)
-        hasher.combine(id)
-        hasher.combine(name)
-        hasher.combine(duration)
-        hasher.combine(type)
-        hasher.combine(isEmptyItem)
-        hasher.combine(groupedWorkouts)
     }
 }
 
