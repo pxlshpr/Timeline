@@ -1,64 +1,15 @@
 import SwiftUI
 
-extension TimelineItemCell {
-    class ViewModel: ObservableObject {
-        @Published var item: TimelineItem
-        init(item: TimelineItem) {
-            self.item = item
-        }
-    }
-}
-
-extension TimelineItemCell.ViewModel {
-    var dateString: String {
-        guard item.type == .workout, let itemEndTime = item.endTime else {
-            return item.date.shortTime
-        }
-        
-        let endTime: Date
-        if let lastItemEndTime = item.groupedWorkouts.last?.endTime {
-            endTime = lastItemEndTime
-        } else {
-            endTime = itemEndTime
-        }
-        
-        return "\(item.date.shortTime) – \(endTime.shortTime)"
-    }
-    
-    var hasGroupedWorkouts: Bool {
-        !item.groupedWorkouts.isEmpty
-    }
-    
-    var titleString: String {
-        if hasGroupedWorkouts {
-            return "Workout Session"
-        } else {
-            return item.name
-        }
-    }
-    
-    var allWorkouts: [TimelineItem] {
-        guard hasGroupedWorkouts else {
-            return []
-        }
-        var workouts = [item]
-        workouts.append(contentsOf: item.groupedWorkouts)
-        return workouts
-    }
-    
-    var workoutStrings: [(id: String, name: String, duration: String)] {
-        allWorkouts.map { workout in
-            (workout.id, workout.name, (workout.duration ?? 0).stringTime)
-        }
-    }
-}
-
 struct TimelineItemCell: View {
 
-    @StateObject var viewModel: ViewModel
+    @ObservedObject var viewModel: ViewModel
     
-    init(_ item: TimelineItem) {
-        _viewModel = StateObject(wrappedValue: ViewModel(item: item))
+//    init(_ item: TimelineItem) {
+//        _viewModel = StateObject(wrappedValue: ViewModel(item: item))
+//    }
+    
+    init(viewModel: TimelineItemCell.ViewModel) {
+        _viewModel = ObservedObject(initialValue: viewModel)
     }
     
     var body: some View {
