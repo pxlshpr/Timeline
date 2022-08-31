@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftSugar
 
 public class TimelineItem: ObservableObject {
     
@@ -45,7 +46,48 @@ extension TimelineItem {
     }
 }
 
-extension Array where Element == TimelineItem {
+extension TimelineItem {
+    var dateString: String {
+        guard type == .workout, let itemEndTime = endTime else {
+            return date.shortTime
+        }
+        
+        let endTime: Date
+        if let lastItemEndTime = groupedWorkouts.last?.endTime {
+            endTime = lastItemEndTime
+        } else {
+            endTime = itemEndTime
+        }
+        
+        return "\(date.shortTime) – \(endTime.shortTime)"
+    }
+    
+    var titleString: String {
+        if !groupedWorkouts.isEmpty {
+            return "Workout Session"
+        } else {
+            return name
+        }
+    }
+    
+    var allWorkouts: [TimelineItem] {
+        guard !groupedWorkouts.isEmpty else {
+            return []
+        }
+        var workouts = [self]
+        workouts.append(contentsOf: groupedWorkouts)
+        return workouts
+    }
+    
+    var workoutStrings: [(id: String, name: String, duration: String)] {
+        allWorkouts.map { workout in
+            (workout.id, workout.name, (workout.duration ?? 0).stringTime)
+        }
+    }
+    
+}
+
+ extension Array where Element == TimelineItem {
     var sortedByDate: [TimelineItem] {
         sorted(by: { $0.date < $1.date })
     }

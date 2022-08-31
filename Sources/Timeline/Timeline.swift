@@ -1,27 +1,4 @@
 import SwiftUI
-import SwiftSugar
-
-public protocol TimelineDelegate {
-    func didTapItem(_ item: TimelineItem)
-    func didTapInterval(between item1: TimelineItem, and item2: TimelineItem)
-    func shouldRegisterTapsOnItems() -> Bool
-    func shouldRegisterTapsOnIntervals() -> Bool
-}
-
-public extension TimelineDelegate {
-    func didTapItem(_ item: TimelineItem) { }
-    func didTapInterval(between item1: TimelineItem, and item2: TimelineItem) { }
-    func shouldRegisterTapsOnItems() -> Bool { false }
-    func shouldRegisterTapsOnIntervals() -> Bool { false }
-}
-
-let TimelineTrackWidth: CGFloat = 70
-
-internal var connector: some View {
-    Rectangle()
-        .frame(width: 5)
-        .foregroundColor(Color(.tertiarySystemGroupedBackground))
-}
 
 public struct Timeline: View {
     
@@ -50,10 +27,10 @@ public struct Timeline: View {
                             Button {
                                 delegate.didTapItem(item)
                             } label: {
-                                cell(for: item)
+                                TimelineItemCell(item: item)
                             }
                         } else {
-                            cell(for: item)
+                            TimelineItemCell(item: item)
                         }
                         HStack {
                             optionalConnector(for: item)
@@ -155,7 +132,9 @@ public struct Timeline: View {
         
         var title: some View {
             var dateText: some View {
-                Text(item.dateString)
+                let dateString = item.dateString
+                print("Setting title with dateString: \(dateString)")
+                return Text(item.dateString)
                     .font(.subheadline)
                     .foregroundColor(item.isNew ? Color.accentColor : Color(.secondaryLabel))
             }
@@ -216,45 +195,4 @@ public struct Timeline: View {
         }
         return items + [newMeal]
     }
-}
-
-extension TimelineItem {
-    var dateString: String {
-        guard type == .workout, let itemEndTime = endTime else {
-            return date.shortTime
-        }
-        
-        let endTime: Date
-        if let lastItemEndTime = groupedWorkouts.last?.endTime {
-            endTime = lastItemEndTime
-        } else {
-            endTime = itemEndTime
-        }
-        
-        return "\(date.shortTime) – \(endTime.shortTime)"
-    }
-    
-    var titleString: String {
-        if !groupedWorkouts.isEmpty {
-            return "Workout Session"
-        } else {
-            return name
-        }
-    }
-    
-    var allWorkouts: [TimelineItem] {
-        guard !groupedWorkouts.isEmpty else {
-            return []
-        }
-        var workouts = [self]
-        workouts.append(contentsOf: groupedWorkouts)
-        return workouts
-    }
-    
-    var workoutStrings: [(id: String, name: String, duration: String)] {
-        allWorkouts.map { workout in
-            (workout.id, workout.name, (workout.duration ?? 0).stringTime)
-        }
-    }
-    
 }
