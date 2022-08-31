@@ -21,32 +21,20 @@ struct TimelineItemCell: View {
     //MARK: - Components
     var emojiIcon: some View {
         VStack(spacing: 0) {
+            connector
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                    .foregroundColor(foregroundColor)
-                    .frame(height: 55)
-//                    .padding(.horizontal, 6)
-//                    .padding(.vertical, 8)
-                TimelineItemCellGrid(emojis: ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅"])
-//                Grid {
-//                    GridRow {
-//                        Text("🍆")
-//                        Text("🥦")
-//                        Text("🥙")
-//                    }
-//                    GridRow {
-//                        Text("🥚")
-//                        Text("🍕")
-//                        Text("🧆")
-//                    }
-//                }
-                .font(.system(size: 14))
-                .padding(.vertical, 8)
-//                .padding(.horizontal, 6)
+                TimelineItemCellGrid(emojis: item.emojis)
+                    .font(.system(size: 14))
+                    .padding(5)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .foregroundColor(foregroundColor)
+//                            .frame(height: 55)
+                    )
             }
-            if !item.groupedWorkouts.isEmpty {
+//            if !item.groupedWorkouts.isEmpty {
                 connector
-            }
+//            }
         }
         .frame(width: TimelineTrackWidth)
     }

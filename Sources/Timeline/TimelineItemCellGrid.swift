@@ -4,20 +4,28 @@ struct TimelineItemCellGrid: View {
     
 //    let emojis: [String] = ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅"]
     let emojis: [String]
+    let columnCount = 3
 
     var body: some View {
         Grid(verticalSpacing: 4) {
-            if let topRow = emojis.topRow {
+            if let topRow = emojis.topRow(forColumnCount: columnCount) {
                 GridRow {
                     ForEach(topRow, id: \.self) { emoji in
                         Text(emoji)
                     }
                 }
             }
-            if let bottomRow = emojis.bottomRow {
+            if let bottomRow = emojis.bottomRow(forColumnCount: columnCount) {
                 GridRow {
-                    ForEach(bottomRow, id: \.self) { emoji in
+                    ForEach(bottomRow[0..<bottomRow.count-1], id: \.self) { emoji in
                         Text(emoji)
+                    }
+                    if emojis.count > 2 * columnCount {
+//                        Text("⋯")
+                        Image(systemName: "ellipsis")
+                            .foregroundColor(Color(.tertiaryLabel))
+                    } else if let last = bottomRow.last {
+                        Text(last)
                     }
                 }
             }
@@ -26,25 +34,49 @@ struct TimelineItemCellGrid: View {
 }
 
 extension Array where Element == String {
-    var topRow: [String]? {
+    func topRow(forColumnCount columnCount: Int) -> [String]? {
         guard !isEmpty else {
             return nil
         }
-        return Array(self[0..<Swift.min(3, count)])
+        return Array(self[0..<Swift.min(columnCount, count)])
     }
     
-    var bottomRow: [String]? {
-        guard count > 3 else {
+    func bottomRow(forColumnCount columnCount: Int) -> [String]? {
+        guard count > columnCount else {
             return nil
         }
-        return Array(self[3..<Swift.min(6, count)])
+        return Array(self[columnCount..<Swift.min(columnCount * 2, count)])
     }
 }
 
 struct TimelineItemCellGrid_Previews: PreviewProvider {
+    
+    static let emojisArray = [
+        [],
+        ["🍆"],
+        ["🍆", "🍐"],
+        ["🍆", "🍐", "🍊"],
+        ["🍆", "🍐", "🍊", "🍌"],
+        ["🍆", "🍐", "🍊", "🍌", "🫒"],
+        ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅", "🍕"],
+        ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅", "🍕", "🥐", "🥨", "🍳"]
+    ]
+    
+    static func grid(for emojis: [String]) -> some View {
+        TimelineItemCellGrid(emojis: emojis)
+            .padding(5)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .foregroundColor(Color(.tertiarySystemGroupedBackground))
+            )
+    }
+    
     static var previews: some View {
-//        TimelineItemCellGrid(emojis: ["🍏"])
-        TimelineItemCellGrid(emojis: ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅"])
-            .preferredColorScheme(.dark)
+        VStack(spacing: 10) {
+            ForEach(emojisArray, id: \.self) { emojis in
+                grid(for: emojis)
+            }
+        }
+        .preferredColorScheme(.dark)
     }
 }

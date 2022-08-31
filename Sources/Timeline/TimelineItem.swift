@@ -9,16 +9,18 @@ public class TimelineItem: ObservableObject {
     var id: String
     var name: String
     var duration: TimeInterval?
+    var emojis: [String]
     var type: TimelineItemType
     var isEmptyItem: Bool
     
     var groupedWorkouts: [TimelineItem]
     
-    public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, type: TimelineItemType = .meal, isNew: Bool = false, isEmptyItem: Bool = false) {
+    public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, emojis: [String] = [], type: TimelineItemType = .meal, isNew: Bool = false, isEmptyItem: Bool = false) {
         self.id = id ?? UUID().uuidString
         self.name = name
         self.date = date
         self.duration = duration
+        self.emojis = emojis
         self.type = type
         self.isNew = isNew
         self.isEmptyItem = isEmptyItem
@@ -35,6 +37,7 @@ extension TimelineItem {
         guard !groupedWorkouts.contains(where: { $0.id == item.id }) else {
             return
         }
+        emojis.append(contentsOf: item.emojis)
         groupedWorkouts.append(item)
     }
     
