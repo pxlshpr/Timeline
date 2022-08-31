@@ -5,23 +5,39 @@ struct TimelineItemCell: View {
     @ObservedObject var item: TimelineItem
     
     var body: some View {
-        HStack(alignment: .top, spacing: 0) {
-            Spacer().frame(width: 10)
-            if item.isNew {
-                icon
-            } else {
-                emojiIcon
+        ZStack {
+            HStack(spacing: 0) {
+                connector
+                    .frame(width: TimelineTrackWidth)
+                Spacer()
             }
-            title
-            Spacer()
+            HStack(alignment: .center, spacing: 0) {
+                emojiIcon
+                title
+                Spacer()
+            }
+            .padding(.vertical, 5)
+            .background(
+                Group {
+                    if item.isNew {
+                        RoundedRectangle(cornerRadius: 10.0)
+                            .foregroundColor(Color.accentColor)
+                    }
+                }
+            )
         }
+        .padding(.horizontal, 10)
         .frame(maxWidth: .infinity)
+    }
+    
+    var connectorLayer: some View {
+        connector
     }
     
     //MARK: - Components
     var emojiIcon: some View {
         VStack(spacing: 0) {
-            connector
+//            connector
             ZStack {
                 Group {
                     if !item.emojis.isEmpty {
@@ -39,7 +55,7 @@ struct TimelineItemCell: View {
                         .foregroundColor(foregroundColor)
                 )
             }
-            connector
+//            connector
         }
         .frame(width: TimelineTrackWidth)
     }
@@ -71,27 +87,27 @@ struct TimelineItemCell: View {
             print("Setting title with dateString: \(dateString)")
             return Text(item.dateString)
                 .font(.subheadline)
-                .foregroundColor(item.isNew ? Color.accentColor : Color(.secondaryLabel))
+                .foregroundColor(item.isNew ? Color.white : Color(.secondaryLabel))
         }
         
         var titleText: some View {
             HStack {
                 Text("\(item.titleString)")
-                    .foregroundColor(item.isNew ? Color.accentColor : Color(.label))
+                    .foregroundColor(item.isNew ? Color.white : Color(.label))
                     .bold(item.isNew)
                     .font(.title3)
-                if item.isNew {
-                    Text("NEW")
-                        .font(.footnote)
-                        .bold()
-                        .foregroundColor(Color(.secondaryLabel))
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 5)
-                                .foregroundColor(Color(.tertiarySystemGroupedBackground))
-                        )
-                }
+//                if item.isNew {
+//                    Text("NEW")
+//                        .font(.footnote)
+//                        .bold()
+//                        .foregroundColor(Color(.secondaryLabel))
+//                        .padding(.vertical, 4)
+//                        .padding(.horizontal, 6)
+//                        .background(
+//                            RoundedRectangle(cornerRadius: 5)
+//                                .foregroundColor(Color(.tertiarySystemGroupedBackground))
+//                        )
+//                }
             }
         }
         
@@ -117,7 +133,7 @@ struct TimelineItemCell: View {
     //MARK: - Colors
     
     var foregroundColor: Color {
-        item.isNew ? Color.accentColor : Color(.tertiarySystemGroupedBackground)
+        item.isNew ? Color(.tertiaryLabel) : Color(.tertiarySystemGroupedBackground)
     }
     
     var labelColor: Color {

@@ -76,14 +76,14 @@ public struct Timeline: View {
                             .foregroundColor(colorScheme == .dark ? Color(.systemGray3) : Color(.systemGray5))
                     )
                 connector
-                    .frame(height: 35)
+                    .frame(height: ConnectorHeight)
             }
         }
         
         return VStack(spacing: 0) {
             if let timeInterval = timeInterval(for: item) {
                 connector
-                    .frame(height: 35)
+                    .frame(height: ConnectorHeight)
                 if timeInterval > 60 {
                     if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals() {
                         Button {
