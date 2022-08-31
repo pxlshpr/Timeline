@@ -5,29 +5,62 @@ struct TimelineItemCell: View {
     @ObservedObject var item: TimelineItem
     
     var body: some View {
-        HStack(alignment: .top) {
-            icon
-                .frame(width: TimelineTrackWidth)
+        HStack(alignment: .top, spacing: 0) {
+            Spacer().frame(width: 10)
+            if item.isNew {
+                icon
+            } else {
+                emojiIcon
+            }
             title
             Spacer()
         }
         .frame(maxWidth: .infinity)
     }
     
-    var foregroundColor: Color {
-        item.isNew ? Color.accentColor : Color(.tertiarySystemGroupedBackground)
-    }
-    
-    var labelColor: Color {
-        item.isNew ? Color.white : Color(.tertiaryLabel)
+    //MARK: - Components
+    var emojiIcon: some View {
+        VStack(spacing: 0) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 8)
+                    .foregroundColor(foregroundColor)
+                    .frame(height: 55)
+//                    .padding(.horizontal, 6)
+//                    .padding(.vertical, 8)
+                TimelineItemCellGrid(emojis: ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅"])
+//                Grid {
+//                    GridRow {
+//                        Text("🍆")
+//                        Text("🥦")
+//                        Text("🥙")
+//                    }
+//                    GridRow {
+//                        Text("🥚")
+//                        Text("🍕")
+//                        Text("🧆")
+//                    }
+//                }
+                .font(.system(size: 14))
+                .padding(.vertical, 8)
+//                .padding(.horizontal, 6)
+            }
+            if !item.groupedWorkouts.isEmpty {
+                connector
+            }
+        }
+        .frame(width: TimelineTrackWidth)
     }
     
     var icon: some View {
         VStack(spacing: 0) {
             ZStack {
-                Circle()
+//                Circle()
+//                    .foregroundColor(foregroundColor)
+//                    .frame(width: 50, height: 50)
+                RoundedRectangle(cornerRadius: 5)
                     .foregroundColor(foregroundColor)
-                    .frame(width: 50, height: 50)
+                    .frame(height: 50)
+                    .padding(.horizontal, 5)
                 Image(systemName: item.type.image)
                     .font(.title2)
                     .foregroundColor(labelColor)
@@ -87,5 +120,14 @@ struct TimelineItemCell: View {
             optionalGroupedItemsTexts
         }
         .padding(.leading)
+    }
+    //MARK: - Colors
+    
+    var foregroundColor: Color {
+        item.isNew ? Color.accentColor : Color(.tertiarySystemGroupedBackground)
+    }
+    
+    var labelColor: Color {
+        item.isNew ? Color.white : Color(.tertiaryLabel)
     }
 }

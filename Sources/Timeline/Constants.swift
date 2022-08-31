@@ -1,3 +1,3 @@
 import SwiftUI
 
-let TimelineTrackWidth: CGFloat = 70
+let TimelineTrackWidth: CGFloat = 90

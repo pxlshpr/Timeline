@@ -101,6 +101,7 @@ public struct Timeline: View {
             }
         }
         .frame(width: TimelineTrackWidth)
+        .padding(.leading, 10)
     }
     
     func cell(for item: TimelineItem) -> some View {
