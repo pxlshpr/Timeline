@@ -23,18 +23,23 @@ struct TimelineItemCell: View {
         VStack(spacing: 0) {
             connector
             ZStack {
-                TimelineItemCellGrid(emojis: item.emojis)
-                    .font(.system(size: 14))
-                    .padding(5)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .foregroundColor(foregroundColor)
-//                            .frame(height: 55)
-                    )
+                Group {
+                    if !item.emojis.isEmpty {
+                        TimelineItemCellGrid(emojis: item.emojis)
+                            .font(.system(size: 14))
+                    } else {
+                        Image(systemName: item.type.image)
+                            .font(.title2)
+                            .foregroundColor(labelColor)
+                    }
+                }
+                .padding(5)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .foregroundColor(foregroundColor)
+                )
             }
-//            if !item.groupedWorkouts.isEmpty {
-                connector
-//            }
+            connector
         }
         .frame(width: TimelineTrackWidth)
     }
