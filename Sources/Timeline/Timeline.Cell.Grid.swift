@@ -1,11 +1,14 @@
 import SwiftUI
 
-struct TimelineItemCellGrid: View {
-    
-//    let emojis: [String] = ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅"]
-    let emojis: [String]
-    let columnCount = 3
+extension Timeline.Cell {
+    struct Grid: View {
+        let emojis: [String]
+        let columnCount = 3
+    }
+}
 
+extension Timeline.Cell.Grid {
+    
     var body: some View {
         Grid(verticalSpacing: 4) {
             if let topRow = emojis.topRow(forColumnCount: columnCount) {
@@ -63,7 +66,7 @@ struct TimelineItemCellGrid_Previews: PreviewProvider {
     ]
     
     static func grid(for emojis: [String]) -> some View {
-        TimelineItemCellGrid(emojis: emojis)
+        Timeline.Cell.Grid(emojis: emojis)
             .padding(5)
             .background(
                 RoundedRectangle(cornerRadius: 8)

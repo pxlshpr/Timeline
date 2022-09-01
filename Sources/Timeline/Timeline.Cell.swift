@@ -1,8 +1,14 @@
 import SwiftUI
 
-struct TimelineItemCell: View {
-    
-    @ObservedObject var item: TimelineItem
+extension Timeline {
+    struct Cell: View {
+        @Environment(\.colorScheme) var colorScheme
+        
+        @ObservedObject var item: TimelineItem
+    }
+}
+
+extension Timeline.Cell {
     
     var body: some View {
         ZStack {
@@ -41,42 +47,22 @@ struct TimelineItemCell: View {
             ZStack {
                 Group {
                     if !item.emojis.isEmpty {
-                        TimelineItemCellGrid(emojis: item.emojis)
+                        Timeline.Cell.Grid(emojis: item.emojis)
                             .font(.system(size: 14))
                     } else {
                         Image(systemName: item.type.image)
                             .font(.title2)
-                            .foregroundColor(labelColor)
+                            .foregroundColor(item.isNew ? Color.white : Color(.tertiaryLabel))
                     }
                 }
-                .padding(5)
+                .padding(10)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .foregroundColor(foregroundColor)
+//                        .foregroundColor(item.isNew ? Color(.tertiaryLabel) : Color(.secondarySystemGroupedBackground))
+                        .foregroundColor(item.isNew ? Color(.tertiaryLabel) : Color(colorScheme == .dark ? .darkGray : .systemGray5))
                 )
             }
 //            connector
-        }
-        .frame(width: TimelineTrackWidth)
-    }
-    
-    var icon: some View {
-        VStack(spacing: 0) {
-            ZStack {
-//                Circle()
-//                    .foregroundColor(foregroundColor)
-//                    .frame(width: 50, height: 50)
-                RoundedRectangle(cornerRadius: 5)
-                    .foregroundColor(foregroundColor)
-                    .frame(height: 50)
-                    .padding(.horizontal, 5)
-                Image(systemName: item.type.image)
-                    .font(.title2)
-                    .foregroundColor(labelColor)
-            }
-            if !item.groupedWorkouts.isEmpty {
-                connector
-            }
         }
         .frame(width: TimelineTrackWidth)
     }
@@ -96,18 +82,20 @@ struct TimelineItemCell: View {
                     .foregroundColor(item.isNew ? Color.white : Color(.label))
                     .bold(item.isNew)
                     .font(.title3)
-//                if item.isNew {
-//                    Text("NEW")
-//                        .font(.footnote)
-//                        .bold()
+                if item.isNew {
+                    Text("NEW")
+                        .font(.footnote)
+                        .bold()
+                        .foregroundColor(Color.white)
 //                        .foregroundColor(Color(.secondaryLabel))
-//                        .padding(.vertical, 4)
-//                        .padding(.horizontal, 6)
-//                        .background(
-//                            RoundedRectangle(cornerRadius: 5)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 5)
+                                .foregroundColor(Color(.tertiaryLabel))
 //                                .foregroundColor(Color(.tertiarySystemGroupedBackground))
-//                        )
-//                }
+                        )
+                }
             }
         }
         
@@ -129,14 +117,5 @@ struct TimelineItemCell: View {
             optionalGroupedItemsTexts
         }
         .padding(.leading)
-    }
-    //MARK: - Colors
-    
-    var foregroundColor: Color {
-        item.isNew ? Color(.tertiaryLabel) : Color(.tertiarySystemGroupedBackground)
-    }
-    
-    var labelColor: Color {
-        item.isNew ? Color.white : Color(.tertiaryLabel)
     }
 }
