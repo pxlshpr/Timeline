@@ -5,7 +5,7 @@ public class TimelineItem: ObservableObject {
     
     @Published public var date: Date
     public var isNew: Bool
-
+    
     var id: String
     var name: String
     var duration: TimeInterval?
@@ -14,8 +14,9 @@ public class TimelineItem: ObservableObject {
     var isEmptyItem: Bool
     
     var groupedWorkouts: [TimelineItem]
+    var isNow: Bool
     
-    public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, emojis: [String] = [], type: TimelineItemType = .meal, isNew: Bool = false, isEmptyItem: Bool = false) {
+    public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, emojis: [String] = [], type: TimelineItemType = .meal, isNew: Bool = false, isEmptyItem: Bool = false, isNow: Bool = false) {
         self.id = id ?? UUID().uuidString
         self.name = name
         self.date = date
@@ -25,6 +26,7 @@ public class TimelineItem: ObservableObject {
         self.isNew = isNew
         self.isEmptyItem = isEmptyItem
         self.groupedWorkouts = []
+        self.isNow = isNow
     }
     
     static var emptyMeal: TimelineItem {
@@ -90,9 +92,19 @@ extension TimelineItem {
     
 }
 
- extension Array where Element == TimelineItem {
+extension TimelineItem {
+    static var now: TimelineItem {
+        TimelineItem(name: "", date: Date(), isNow: true)
+    }
+}
+
+extension Array where Element == TimelineItem {
     var sortedByDate: [TimelineItem] {
         sorted(by: { $0.date < $1.date })
+    }
+    
+    var addingNow: [TimelineItem] {
+        self + [TimelineItem.now]
     }
     
     var groupingWorkouts: [TimelineItem] {
@@ -127,7 +139,7 @@ extension TimelineItem {
             } while nextWorkout != nil
             /// if so, group them by adding the workout to the item, and addiong its index to the list of those to ignore
             /// now check the next workout for this grouped workout, and see if it too has another one within 15 mintues of its end, and keep going till we have no more
-
+            
             grouped.append(item)
         }
         return grouped

@@ -49,6 +49,10 @@ extension Timeline.Cell {
                     if !item.emojis.isEmpty {
                         Timeline.Cell.Grid(emojis: item.emojis)
                             .font(.system(size: 14))
+                    } else if item.isNow {
+                        Image(systemName: "clock.fill")
+                            .font(.title2)
+                            .foregroundColor(item.isNew ? Color.white : Color(.tertiaryLabel))
                     } else {
                         Image(systemName: item.type.image)
                             .font(.title2)
@@ -69,16 +73,14 @@ extension Timeline.Cell {
     
     var title: some View {
         var dateText: some View {
-            let dateString = item.dateString
-            print("Setting title with dateString: \(dateString)")
-            return Text(item.dateString)
+            Text(item.dateString)
                 .font(.subheadline)
                 .foregroundColor(item.isNew ? Color.white : Color(.secondaryLabel))
         }
         
         var titleText: some View {
             HStack {
-                Text("\(item.titleString)")
+                Text("\(item.isNow ? "Now" : item.titleString)")
                     .foregroundColor(item.isNew ? Color.white : Color(.label))
                     .bold(item.isNew)
                     .font(.title3)

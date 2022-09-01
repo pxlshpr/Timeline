@@ -9,7 +9,26 @@ public struct Timeline: View {
     var delegate: TimelineDelegate?
     
     public init(items: [TimelineItem], newMeal: TimelineItem? = nil, delegate: TimelineDelegate? = nil) {
-        self.items = items.groupingWorkouts
+        
+        var shouldAddNow: Bool {
+            //TODO: Improve this by having a helper that checks whether the current time lies within the wee hours
+            if items.contains(where: { $0.date.startOfDay == Date().startOfDay }) {
+                return true
+            }
+            
+            if let newMeal = newMeal, newMeal.date.startOfDay == Date().startOfDay {
+                return true
+            }
+            
+            return false
+        }
+        
+        let groupedItems = items.groupingWorkouts
+        if shouldAddNow {
+            self.items = groupedItems.addingNow
+        } else {
+            self.items = groupedItems
+        }
         self.delegate = delegate
         self.newMeal = newMeal ?? TimelineItem.emptyMeal
     }
