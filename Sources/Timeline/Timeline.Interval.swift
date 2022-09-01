@@ -18,14 +18,14 @@ extension Timeline.Interval {
                 connector
                     .frame(height: ConnectorHeight)
                 if timeInterval > 60 {
-                    if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals() {
+                    if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals(), timeIntervalShouldBeButton {
                         Button {
                             guard let nextItem = nextItem(to: item) else {
                                 return
                             }
                             delegate.didTapInterval(between: item, and: nextItem)
                         } label: {
-                            timeIntervalView(for: timeInterval)
+                            timeIntervalButton(for: timeInterval)
                         }
                         connector
                             .frame(height: ConnectorHeight)
@@ -41,6 +41,16 @@ extension Timeline.Interval {
         .padding(.leading, 10)
     }
     
+    var timeIntervalShouldBeButton: Bool {
+        guard !item.isNew else {
+            return false
+        }
+        if let nextItem = nextItem(to: item), nextItem.isNew {
+            return false
+        }
+        return true
+    }
+    
 //    func timeIntervalView_legacy(for timeInterval: TimeInterval) -> some View {
 //        Text(timeInterval.shortStringTime)
 //            .font(.subheadline)
@@ -53,39 +63,28 @@ extension Timeline.Interval {
 //            )
 //    }
 
-    func timeIntervalView(for timeInterval: TimeInterval) -> some View {
-//        timeInterval.intervalTextView(valueColor: .accentColor, unitColor: .accentColor)
-        timeInterval.intervalTextView(valueColor: .white, unitColor: .white)
+    func timeIntervalButton(for timeInterval: TimeInterval) -> some View {
+        timeInterval.intervalTextView(valueColor: .accentColor, unitColor: .accentColor)
             .padding(.horizontal, 7)
             .frame(minWidth: 44, minHeight: 44)
             .background(
-                RoundedRectangle(cornerRadius: 12.0)
-                    .foregroundColor(Color.accentColor)
+                Capsule(style: .continuous)
+                    .foregroundColor(Color(.secondarySystemGroupedBackground))
+            )
+            .overlay(
+                Capsule(style: .continuous)
+                    .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 1, dash: [3]))
             )
     }
 
-    func timeIntervalView_normal(for timeInterval: TimeInterval) -> some View {
-        
-        let foregroundColor: Color
-        if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals() {
-            foregroundColor = Color.accentColor
-        } else {
-            foregroundColor = Color(.secondarySystemGroupedBackground)
-        }
-        
-        return Group {
-            if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals() {
-                timeInterval.intervalTextView(valueColor: .white, unitColor: .white)
-            } else {
-                timeInterval.intervalTextView()
-            }
-        }
-        .padding(.horizontal, 7)
-        .frame(minWidth: 44, minHeight: 44)
-        .background(
-            RoundedRectangle(cornerRadius: 12.0)
-                .foregroundColor(foregroundColor)
-        )
+    func timeIntervalView(for timeInterval: TimeInterval) -> some View {
+        timeInterval.intervalTextView()
+            .padding(.horizontal, 7)
+            .frame(minWidth: 44, minHeight: 44)
+            .background(
+                Capsule(style: .continuous)
+                    .foregroundColor(Color(.secondarySystemGroupedBackground))
+            )
     }
 
     func timeInterval(for item: TimelineItem) -> TimeInterval? {
