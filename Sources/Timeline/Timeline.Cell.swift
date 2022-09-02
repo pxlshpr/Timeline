@@ -98,7 +98,7 @@ extension Timeline.Cell {
                     .foregroundColor(item.isNew ? Color.white : Color(.label))
                     .bold(item.isNew)
                     .font(.title3)
-                if item.isNew {
+                if item.date.isNow {
                     Text("NEW")
                         .font(.footnote)
                         .bold()
@@ -133,5 +133,15 @@ extension Timeline.Cell {
             optionalGroupedItemsTexts
         }
         .padding(.leading)
+    }
+}
+
+extension Date {
+    var isNow: Bool {
+        day == Date().day
+        && month == Date().month
+        && year == Date().year
+        && hour == Date().hour
+        && minute == Date().minute
     }
 }

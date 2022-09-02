@@ -11,6 +11,11 @@ public struct Timeline: View {
     public init(items: [TimelineItem], newMeal: TimelineItem? = nil, delegate: TimelineDelegate? = nil) {
         
         var shouldAddNow: Bool {
+            
+            if let newMeal = newMeal, newMeal.date.isNow {
+                return false
+            }
+            
             //TODO: Improve this by having a helper that checks whether the current time lies within the wee hours
             if items.contains(where: { $0.date.startOfDay == Date().startOfDay }) {
                 return true
@@ -43,7 +48,7 @@ public struct Timeline: View {
                 ForEach(sortedItems, id: \.self.id) { item in
                     VStack(spacing: 0) {
                         if item.isNow {
-                            Timeline.NowCell(item: item)
+                            Timeline.NowCell(item: item, delegate: delegate)
                         } else {
                             Timeline.Cell(item: item, delegate: delegate)
                         }
