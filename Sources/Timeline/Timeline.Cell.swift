@@ -99,7 +99,7 @@ extension Timeline.Cell {
                     .bold(item.isNew)
                     .font(.title3)
                 if item.date.isNow {
-                    Text("NEW")
+                    Text("NOW")
                         .font(.footnote)
                         .bold()
                         .foregroundColor(Color.white)
