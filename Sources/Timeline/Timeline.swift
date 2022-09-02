@@ -42,20 +42,12 @@ public struct Timeline: View {
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(sortedItems, id: \.self.id) { item in
                     VStack(spacing: 0) {
-                        if let delegate = delegate, delegate.shouldRegisterTapsOnItems() {
-                            Button {
-                                delegate.didTapItem(item)
-                            } label: {
-                                Timeline.Cell(item: item)
-                            }
+                        if item.isNow {
+                            Timeline.NowCell(item: item)
                         } else {
-                            Timeline.Cell(item: item)
+                            Timeline.Cell(item: item, delegate: delegate)
                         }
-                        HStack {
-                            Timeline.Interval(item: item, sortedItems: sortedItems, delegate: delegate)
-//                            optionalConnector(for: item)
-                            Spacer()
-                        }
+                        Timeline.Interval(item: item, sortedItems: sortedItems, delegate: delegate)
                     }
                 }
             }

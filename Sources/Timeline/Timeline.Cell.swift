@@ -3,14 +3,28 @@ import SwiftUI
 extension Timeline {
     struct Cell: View {
         @Environment(\.colorScheme) var colorScheme
-        
         @ObservedObject var item: TimelineItem
+        var delegate: TimelineDelegate?
     }
 }
 
 extension Timeline.Cell {
     
     var body: some View {
+        Group {
+            if let delegate = delegate, delegate.shouldRegisterTapsOnItems() {
+                Button {
+                    delegate.didTapItem(item)
+                } label: {
+                    content
+                }
+            } else {
+                content
+            }
+        }
+    }
+    
+    var content: some View {
         ZStack {
             HStack(spacing: 0) {
                 connector

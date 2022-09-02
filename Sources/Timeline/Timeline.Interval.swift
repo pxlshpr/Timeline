@@ -13,32 +13,35 @@ extension Timeline {
 extension Timeline.Interval {
     
     var body: some View {
-        VStack(spacing: 0) {
-            if let timeInterval = timeInterval(for: item) {
-                connector
-                    .frame(height: ConnectorHeight)
-                if timeInterval > 60 {
-                    if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals(), timeIntervalShouldBeButton {
-                        Button {
-                            guard let nextItem = nextItem(to: item) else {
-                                return
+        HStack {
+            VStack(spacing: 0) {
+                if let timeInterval = timeInterval(for: item) {
+                    connector
+                        .frame(height: ConnectorHeight)
+                    if timeInterval > 60 {
+                        if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals(), timeIntervalShouldBeButton {
+                            Button {
+                                guard let nextItem = nextItem(to: item) else {
+                                    return
+                                }
+                                delegate.didTapInterval(between: item, and: nextItem)
+                            } label: {
+                                timeIntervalButton(for: timeInterval)
                             }
-                            delegate.didTapInterval(between: item, and: nextItem)
-                        } label: {
-                            timeIntervalButton(for: timeInterval)
+                            connector
+                                .frame(height: ConnectorHeight)
+                        } else {
+                            timeIntervalView(for: timeInterval)
+                            connector
+                                .frame(height: ConnectorHeight)
                         }
-                        connector
-                            .frame(height: ConnectorHeight)
-                    } else {
-                        timeIntervalView(for: timeInterval)
-                        connector
-                            .frame(height: ConnectorHeight)
                     }
                 }
             }
+            .frame(width: TimelineTrackWidth)
+            .padding(.leading, 10)
+            Spacer()
         }
-        .frame(width: TimelineTrackWidth)
-        .padding(.leading, 10)
     }
     
     var timeIntervalShouldBeButton: Bool {
@@ -50,18 +53,6 @@ extension Timeline.Interval {
         }
         return true
     }
-    
-//    func timeIntervalView_legacy(for timeInterval: TimeInterval) -> some View {
-//        Text(timeInterval.shortStringTime)
-//            .font(.subheadline)
-//            .foregroundColor(Color(.secondaryLabel))
-//            .padding(.horizontal, 7)
-//            .frame(minWidth: 44, minHeight: 44)
-//            .background(
-//                Capsule()
-//                    .foregroundColor(colorScheme == .dark ? Color(.systemGray3) : Color(.systemGray5))
-//            )
-//    }
 
     func timeIntervalButton(for timeInterval: TimeInterval) -> some View {
         timeInterval.intervalTextView(valueColor: .accentColor, unitColor: .accentColor)
