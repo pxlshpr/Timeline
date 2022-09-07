@@ -112,7 +112,8 @@ extension Timeline.Cell {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .textCase(.uppercase)
-                    .font(.footnote)
+                    .animatableFont(style: .footnote, weight: .heavy)
+//                    .font(.footnote)
                     .foregroundColor(Color(.secondaryLabel))
 
                 if item.date.isNow {
