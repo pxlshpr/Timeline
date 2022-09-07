@@ -102,7 +102,6 @@ extension Timeline.Cell {
                 .matchedGeometryEffect(id: "date-\(item.id)", in: namespaceWrapper.namespace)
                 .textCase(.uppercase)
                 .font(.footnote)
-                .foregroundColor(foregroundColor)
 //                .font(.subheadline)
 //                .if(registersTapsOnIntervals, transform: { view in
 //                    view
@@ -113,7 +112,7 @@ extension Timeline.Cell {
 //                        .foregroundColor(.white)
 //                })
 
-//                .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(Color(.secondaryLabel))
         }
         
         
@@ -134,7 +133,8 @@ extension Timeline.Cell {
 //                    .fixedSize(horizontal: false, vertical: true)
                     .textCase(.uppercase)
                     .font(.footnote)
-                    .foregroundColor(Color(.secondaryLabel))
+//                    .foregroundColor(Color(.secondaryLabel))
+                    .foregroundColor(foregroundColor)
 
                 if item.date.isNow {
                     Text("NOW")
