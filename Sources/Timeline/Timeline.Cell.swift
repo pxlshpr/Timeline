@@ -90,7 +90,7 @@ extension Timeline.Cell {
     
     var title: some View {
         var dateText: some View {
-            Text(item.dateString)
+            Text("**\(item.dateString)**")
                 .matchedGeometryEffect(id: "date-\(item.id)", in: namespaceWrapper.namespace)
                 .textCase(.uppercase)
                 .font(.footnote)
