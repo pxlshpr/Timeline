@@ -95,16 +95,27 @@ extension Timeline.Cell {
                 .foregroundColor(item.isNew ? Color.white : Color(.secondaryLabel))
         }
         
+        
+        
         var titleText: some View {
             HStack {
+//                Text("\(item.isNow ? "Now" : item.titleString)")
+//                    .foregroundColor(item.isNew ? Color.white : Color(.label))
+//                    .bold(item.isNew)
+//                    .font(.title3)
+//                    .matchedGeometryEffect(id: item.id, in: namespaceWrapper.namespace)
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//                    .fixedSize(horizontal: false, vertical: true)
+//                    .background(.blue)                
                 Text("\(item.isNow ? "Now" : item.titleString)")
-                    .foregroundColor(item.isNew ? Color.white : Color(.label))
-                    .bold(item.isNew)
-                    .font(.title3)
                     .matchedGeometryEffect(id: item.id, in: namespaceWrapper.namespace)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .background(.blue)
+                    .textCase(.uppercase)
+                    .font(.footnote)
+                    .foregroundColor(Color(.secondaryLabel))
+
                 if item.date.isNow {
                     Text("NOW")
                         .font(.footnote)
