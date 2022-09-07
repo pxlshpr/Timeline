@@ -1,6 +1,30 @@
 import SwiftUI
 import SwiftSugar
 
+public struct Emoji {
+    public var id: String
+    public var emoji: String
+    
+    public init(id: String = UUID().uuidString, emoji: String) {
+        self.id = id
+        self.emoji = emoji
+    }
+}
+
+extension Emoji: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(emoji)
+    }
+}
+
+extension Emoji: Equatable {
+    public static func ==(lhs: Emoji, rhs: Emoji) -> Bool {
+        lhs.id == rhs.id
+        && lhs.emoji == rhs.emoji
+    }
+}
+
 public class TimelineItem: ObservableObject {
     
     @Published public var date: Date
@@ -9,14 +33,14 @@ public class TimelineItem: ObservableObject {
     var id: String
     var name: String
     var duration: TimeInterval?
-    var emojis: [String]
+    var emojis: [Emoji]
     var type: TimelineItemType
     var isEmptyItem: Bool
     
     var groupedWorkouts: [TimelineItem]
     var isNow: Bool
     
-    public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, emojis: [String] = [], type: TimelineItemType = .meal, isNew: Bool = false, isEmptyItem: Bool = false, isNow: Bool = false) {
+    public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, emojis: [Emoji] = [], type: TimelineItemType = .meal, isNew: Bool = false, isEmptyItem: Bool = false, isNow: Bool = false) {
         self.id = id ?? UUID().uuidString
         self.name = name
         self.date = date
