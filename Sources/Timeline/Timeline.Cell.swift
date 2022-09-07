@@ -88,15 +88,31 @@ extension Timeline.Cell {
         .frame(width: TimelineTrackWidth)
     }
     
+    var foregroundColor: Color {
+        guard let delegate = delegate else {
+            return .white
+        }
+        return item.isNew ? .white : Color(.secondaryLabel)
+    }
+    
     var title: some View {
         var dateText: some View {
             Text("**\(item.dateString)**")
                 .matchedGeometryEffect(id: "date-\(item.id)", in: namespaceWrapper.namespace)
                 .textCase(.uppercase)
                 .font(.footnote)
+                .foregroundColor(foregroundColor)
 //                .font(.subheadline)
-                .foregroundColor(item.isNew ? Color.white : Color(.secondaryLabel))
-                .foregroundColor(Color(.secondaryLabel))
+//                .if(registersTapsOnIntervals, transform: { view in
+//                    view
+//                        .foregroundColor(item.isNew ? Color.white : Color(.secondaryLabel))
+//                })
+//                .if(!registersTapsOnIntervals, transform: { view in
+//                    view
+//                        .foregroundColor(.white)
+//                })
+
+//                .foregroundColor(Color(.secondaryLabel))
         }
         
         
