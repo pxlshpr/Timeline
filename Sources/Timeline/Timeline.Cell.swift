@@ -91,8 +91,12 @@ extension Timeline.Cell {
     var title: some View {
         var dateText: some View {
             Text(item.dateString)
-                .font(.subheadline)
+                .matchedGeometryEffect(id: "date-\(item.id)", in: namespaceWrapper.namespace)
+                .textCase(.uppercase)
+                .font(.footnote)
+//                .font(.subheadline)
                 .foregroundColor(item.isNew ? Color.white : Color(.secondaryLabel))
+                .foregroundColor(Color(.secondaryLabel))
         }
         
         
@@ -109,12 +113,10 @@ extension Timeline.Cell {
 //                    .background(.blue)
                 Text("\(item.isNow ? "Now" : item.titleString)")
                     .matchedGeometryEffect(id: item.id, in: namespaceWrapper.namespace)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .fixedSize(horizontal: false, vertical: true)
+//                    .frame(maxWidth: .infinity, alignment: .leading)
+//                    .fixedSize(horizontal: false, vertical: true)
                     .textCase(.uppercase)
-//                    .animatableFont(style: .footnote, weight: .heavy)
-                    .animatableFont(size: 14, weight: .black)
-//                    .font(.footnote)
+                    .font(.footnote)
                     .foregroundColor(Color(.secondaryLabel))
 
                 if item.date.isNow {
