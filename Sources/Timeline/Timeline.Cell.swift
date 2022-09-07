@@ -3,7 +3,8 @@ import SwiftUISugar
 
 extension Timeline {
     struct Cell: View {
-        @Environment(\.namespace) var namespace
+        @EnvironmentObject var namespaceWrapper: NamespaceWrapper
+//        @Environment(\.namespace) var namespace
         @Environment(\.colorScheme) var colorScheme
         @ObservedObject var item: TimelineItem
         var delegate: TimelineDelegate?
@@ -100,7 +101,7 @@ extension Timeline.Cell {
                     .foregroundColor(item.isNew ? Color.white : Color(.label))
                     .bold(item.isNew)
                     .font(.title3)
-                    .matchedGeometryEffect(id: item.id, in: namespace)
+                    .matchedGeometryEffect(id: item.id, in: namespaceWrapper.namespace)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
                 if item.date.isNow {
