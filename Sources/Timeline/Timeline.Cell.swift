@@ -168,7 +168,7 @@ extension Timeline.Cell {
         return VStack(alignment: .leading, spacing: 3) {
             dateText
             titleText
-            optionalGroupedItemsTexts
+//            optionalGroupedItemsTexts
         }
         .padding(.leading)
     }
