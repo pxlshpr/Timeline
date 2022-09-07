@@ -112,7 +112,8 @@ extension Timeline.Cell {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .textCase(.uppercase)
-                    .animatableFont(style: .footnote, weight: .heavy)
+//                    .animatableFont(style: .footnote, weight: .heavy)
+                    .animatableFont(size: 14, weight: .black)
 //                    .font(.footnote)
                     .foregroundColor(Color(.secondaryLabel))
 
