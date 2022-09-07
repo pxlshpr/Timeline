@@ -1,7 +1,9 @@
 import SwiftUI
+import SwiftUISugar
 
 extension Timeline {
     struct Cell: View {
+        @Environment(\.namespace) var namespace
         @Environment(\.colorScheme) var colorScheme
         @ObservedObject var item: TimelineItem
         var delegate: TimelineDelegate?
@@ -98,6 +100,7 @@ extension Timeline.Cell {
                     .foregroundColor(item.isNew ? Color.white : Color(.label))
                     .bold(item.isNew)
                     .font(.title3)
+                    .matchedGeometryEffect(id: item.id, in: namespace)
                 if item.date.isNow {
                     Text("NOW")
                         .font(.footnote)
