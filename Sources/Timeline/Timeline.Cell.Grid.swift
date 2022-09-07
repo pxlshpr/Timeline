@@ -17,28 +17,31 @@ extension Timeline.Cell.Grid {
             if let topRow = emojis.topRow(forColumnCount: columnCount) {
                 GridRow {
                     ForEach(topRow, id: \.self) { emoji in
-                        Text(emoji.emoji)
-                            .matchedGeometryEffect(id: emoji.id, in: namespaceWrapper.namespace)
+                        text(for: emoji)
                     }
                 }
             }
             if let bottomRow = emojis.bottomRow(forColumnCount: columnCount) {
                 GridRow {
                     ForEach(bottomRow[0..<bottomRow.count-1], id: \.self) { emoji in
-                        Text(emoji.emoji)
-                            .matchedGeometryEffect(id: emoji.id, in: namespaceWrapper.namespace)
+                        text(for: emoji)
                     }
                     if emojis.count > 2 * columnCount {
 //                        Text("⋯")
                         Image(systemName: "ellipsis")
                             .foregroundColor(Color(.tertiaryLabel))
                     } else if let lastEmoji = bottomRow.last {
-                        Text(lastEmoji.emoji)
-                            .matchedGeometryEffect(id: lastEmoji.id, in: namespaceWrapper.namespace)
+                        text(for: lastEmoji)
                     }
                 }
             }
         }
+    }
+    
+    func text(for emoji: Emoji) -> some View {
+        Text(emoji.emoji)
+            .font(.body)
+            .matchedGeometryEffect(id: emoji.id, in: namespaceWrapper.namespace)
     }
 }
 
