@@ -102,7 +102,7 @@ extension Timeline.Cell {
                     .font(.title3)
                     .matchedGeometryEffect(id: item.id, in: namespace)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .fixedSize(horizontal: true, vertical: false)
+                    .fixedSize(horizontal: false, vertical: true)
                 if item.date.isNow {
                     Text("NOW")
                         .font(.footnote)
