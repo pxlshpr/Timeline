@@ -90,9 +90,9 @@ extension Timeline.Cell {
     
     var foregroundColor: Color {
         if delegate == nil {
-            return .white
+            return Color(.label)
         } else {
-            return item.isNew ? Color(.label) : Color(.secondaryLabel)
+            return item.isNew ? .white : Color(.secondaryLabel)
         }
     }
     
