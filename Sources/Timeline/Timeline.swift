@@ -40,6 +40,16 @@ public struct Timeline: View {
     
     public var body: some View {
         scrollView
+            .background(background)
+    }
+    
+    var background: some View {
+        HStack(spacing: 0) {
+            connector
+                .frame(width: TimelineTrackWidth)
+            Spacer()
+        }
+        .padding(.horizontal, 10)
     }
     
     var scrollView: some View {
