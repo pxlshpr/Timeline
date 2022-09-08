@@ -3,8 +3,8 @@ import SwiftUISugar
 
 extension Timeline.Cell {
     struct Grid: View {
-        @EnvironmentObject var namespaceWrapper: NamespaceWrapper
-
+        @Environment(\.namespace) var namespace
+        
         let emojis: [Emoji]
         let columnCount = 3
     }
@@ -41,7 +41,7 @@ extension Timeline.Cell.Grid {
     func text(for emoji: Emoji) -> some View {
         Text(emoji.emoji)
             .font(.body)
-            .matchedGeometryEffect(id: emoji.id, in: namespaceWrapper.namespace)
+            .matchedGeometryEffect(id: emoji.id, in: namespace)
     }
 }
 

@@ -3,8 +3,7 @@ import SwiftUISugar
 
 extension Timeline {
     struct Cell: View {
-        @EnvironmentObject var namespaceWrapper: NamespaceWrapper
-//        @Environment(\.namespace) var namespace
+        @Environment(\.namespace) var namespace
         @Environment(\.colorScheme) var colorScheme
         @ObservedObject var item: TimelineItem
         var delegate: TimelineDelegate?
@@ -88,18 +87,18 @@ extension Timeline.Cell {
         .frame(width: TimelineTrackWidth)
     }
     
-    var foregroundColor: Color {
-        if delegate == nil {
-            return Color(.label)
-        } else {
-            return item.isNew ? .white : Color(.secondaryLabel)
-        }
-    }
-    
     var title: some View {
         var dateText: some View {
-            Text("**\(item.dateString)**")
-                .matchedGeometryEffect(id: "date-\(item.id)", in: namespaceWrapper.namespace)
+            var foregroundColor: Color {
+                if delegate == nil {
+                    return Color(.secondaryLabel)
+                } else {
+                    return item.isNew ? .white : Color(.secondaryLabel)
+                }
+            }
+
+            return Text("**\(item.dateString)**")
+                .matchedGeometryEffect(id: "date-\(item.id)", in: namespace)
                 .textCase(.uppercase)
                 .font(.footnote)
 //                .font(.subheadline)
@@ -112,13 +111,21 @@ extension Timeline.Cell {
 //                        .foregroundColor(.white)
 //                })
 
-                .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(foregroundColor)
         }
         
         
         
         var titleText: some View {
-            HStack {
+            var foregroundColor: Color {
+                if delegate == nil {
+                    return Color(.label)
+                } else {
+                    return item.isNew ? .white : Color(.label)
+                }
+            }
+            
+            return HStack {
 //                Text("\(item.isNow ? "Now" : item.titleString)")
 //                    .foregroundColor(item.isNew ? Color.white : Color(.label))
 //                    .bold(item.isNew)
@@ -128,7 +135,7 @@ extension Timeline.Cell {
 //                    .fixedSize(horizontal: false, vertical: true)
 //                    .background(.blue)
                 Text("\(item.isNow ? "Now" : item.titleString)")
-                    .matchedGeometryEffect(id: item.id, in: namespaceWrapper.namespace)
+                    .matchedGeometryEffect(id: item.id, in: namespace)
 //                    .frame(maxWidth: .infinity, alignment: .leading)
 //                    .fixedSize(horizontal: false, vertical: true)
                     .textCase(.uppercase)

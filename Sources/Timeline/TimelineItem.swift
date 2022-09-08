@@ -53,6 +53,20 @@ public class TimelineItem: ObservableObject {
         self.isNow = isNow
     }
     
+    public required init(id: String? = nil, name: String, date: Date, duration: TimeInterval? = nil, emojiStrings: [String], type: TimelineItemType = .meal, isNew: Bool = false, isEmptyItem: Bool = false, isNow: Bool = false) {
+        self.id = id ?? UUID().uuidString
+        self.name = name
+        self.date = date
+        self.duration = duration
+        self.emojis = emojiStrings.map { Emoji(emoji: $0) }
+        self.type = type
+        self.isNew = isNew
+        self.isEmptyItem = isEmptyItem
+        self.groupedWorkouts = []
+        self.isNow = isNow
+    }
+
+    
     static var emptyMeal: TimelineItem {
         Self.init(id: "", name: "", date: Date(), type: .meal, isEmptyItem: true)
     }
