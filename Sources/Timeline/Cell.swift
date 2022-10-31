@@ -90,13 +90,10 @@ struct Cell: View {
     }
     
     var title: some View {
+        
         var dateText: some View {
             var foregroundColor: Color {
-                if delegate == nil {
-                    return Color(.secondaryLabel)
-                } else {
-                    return item.isNew ? .white : Color(.secondaryLabel)
-                }
+                delegate == nil ? Color(.secondaryLabel) : Color(.secondaryLabel)
             }
 
             return Text("**\(item.dateString)**")
@@ -125,6 +122,8 @@ struct Cell: View {
                 Text("\(item.isNow ? "Now" : item.titleString)")
                     .textCase(.uppercase)
                     .font(.footnote)
+//                    .font(item.isNew ? .title3 : .footnote)
+//                    .bold(item.isNew)
                     .foregroundColor(foregroundColor)
                     .if(matchedGeometryNamespace != nil) { view in
                         view
@@ -159,11 +158,134 @@ struct Cell: View {
             }
         }
         
-        return VStack(alignment: .leading, spacing: 3) {
-            dateText
-            titleText
-//            optionalGroupedItemsTexts
+        var newDateText: some View {
+            Text("**\(item.dateString)**")
+                .textCase(.uppercase)
+                .font(.largeTitle)
+                .foregroundColor(.white)
+                .if(matchedGeometryNamespace != nil) { view in
+                    view
+                        .matchedGeometryEffect(id: "date-\(item.id)", in: matchedGeometryNamespace!)
+                }
+                .transition(.scale)
         }
-        .padding(.leading)
+        
+        return HStack {
+            VStack(alignment: .leading, spacing: 3) {
+                if !item.isNew {
+                    dateText
+                }
+                titleText
+            }
+            .padding(.leading)
+            if item.isNew {
+                Spacer()
+                newDateText
+            }
+        }
+    }
+}
+
+class ViewModel: ObservableObject {
+    @Published var newMeal: TimelineItem = TimelineItem(name: "Big Post-Workout Meal Here is a long name, like really long", date: date(hour: 16), isNew: true)
+}
+
+extension ViewModel: TimelineDelegate {
+    func didTapNow() {
+        withAnimation {
+            newMeal.date = Date()
+        }
+    }
+    
+    func shouldRegisterTapsOnIntervals() -> Bool {
+        true
+    }
+    
+    func didTapInterval(between item1: TimelineItem, and item2: TimelineItem) {
+        guard !(item1.isNew || item2.isNew) else {
+            return
+        }
+        guard item2.date > item1.date else {
+            return
+        }
+        let midPoint = ((item2.date.timeIntervalSince1970 - item1.date.timeIntervalSince1970) / 2.0) + item1.date.timeIntervalSince1970
+        let midPointDate = Date(timeIntervalSince1970: midPoint)
+        withAnimation {
+            newMeal.date = midPointDate
+        }
+    }
+}
+
+import SwiftSugar
+
+struct TimelinePreview: View {
+    
+    let items: [TimelineItem] = [
+        TimelineItem(name: "Pre-workout Meal", date: date(hour: 15, minute: 30), emojiStrings: []),
+        TimelineItem(name: "Walking", date: date(hour: 16, minute: 29), duration: 707, emojiStrings: ["🚶"], type: .workout),
+        TimelineItem(name: "Flexibility", date: date(hour: 16, minute: 41), duration: 248, emojiStrings: ["🙆"], type: .workout),
+        TimelineItem(name: "Traditional Strength Training", date: date(hour: 16, minute: 45), duration: 10909, emojiStrings: ["🏋🏽‍♂️"], type: .workout),
+        TimelineItem(name: "Intra-workout Snack", date: date(hour: 17, minute: 30), emojiStrings: ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅", "🍕"]),
+        TimelineItem(name: "Post-workout Meal", date: date(hour: 20, minute: 40), emojiStrings: ["🍆", "🍐", "🍊", "🍌"]),
+        TimelineItem(name: "Walking", date: date(hour: 22, minute: 30), duration: 50, emojiStrings: [], type: .workout),
+        TimelineItem(name: "Snack", date: date(hour: 22), emojiStrings: ["🍆"]),
+        TimelineItem(name: "Dinner", date: date(hour: 23), emojiStrings: ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅"])
+    ]
+    
+    @StateObject var viewModel = ViewModel()
+    
+    @State var isForNewMeal: Bool = true
+    
+    var body: some View {
+        NavigationView {
+            Group {
+                if isForNewMeal {
+                    Timeline(items: items, newItem: viewModel.newMeal, delegate: viewModel)
+                } else {
+                    Timeline(items: items)
+                }
+            }
+            .toolbar { navigationTrailingContent }
+            .toolbar { navigationLeadingContent }
+            .background(Color(.tertiarySystemGroupedBackground))
+        }
+    }
+    
+    var navigationLeadingContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigationBarLeading) {
+            Picker("", selection: $isForNewMeal) {
+                Text("Timeline").tag(false)
+                Text("New Meal").tag(true)
+            }
+            .pickerStyle(.segmented)
+        }
+    }
+    
+    var navigationTrailingContent: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigationBarTrailing) {
+            if isForNewMeal {
+                Button {
+                    withAnimation {
+                        viewModel.newMeal.date = viewModel.newMeal.date.addingTimeInterval(-3600)
+                    }
+                } label: {
+                    Image(systemName: "gobackward.60")
+                }
+                Button {
+                    withAnimation {
+                        viewModel.newMeal.date = viewModel.newMeal.date.addingTimeInterval(3600)
+                    }
+                } label: {
+                    Image(systemName: "goforward.60")
+                }
+            }
+        }
+    }
+}
+
+struct TimelinePreview_Previews: PreviewProvider {
+    static var previews: some View {
+        TimelinePreview()
+//            .preferredColorScheme(.dark)
     }
 }
