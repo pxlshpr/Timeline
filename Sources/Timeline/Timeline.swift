@@ -5,14 +5,18 @@ public struct Timeline: View {
     @Environment(\.colorScheme) var colorScheme
     
     var items: [TimelineItem]
-    @ObservedObject var newMeal: TimelineItem
+    //TODO: Stop using @ObservedObject here
+    @ObservedObject var newItem: TimelineItem
     var delegate: TimelineDelegate?
     
-    public init(items: [TimelineItem], newMeal: TimelineItem? = nil, delegate: TimelineDelegate? = nil) {
-        
+    public init(
+        items: [TimelineItem],
+        newItem: TimelineItem? = nil,
+        delegate: TimelineDelegate? = nil
+    ) {
         var shouldAddNow: Bool {
             
-            if let newMeal = newMeal, newMeal.date.isNow {
+            if let newItem, newItem.date.isNow {
                 return false
             }
             
@@ -21,7 +25,7 @@ public struct Timeline: View {
                 return true
             }
             
-            if let newMeal = newMeal, newMeal.date.startOfDay == Date().startOfDay {
+            if let newItem, newItem.date.startOfDay == Date().startOfDay {
                 return true
             }
             
@@ -35,7 +39,7 @@ public struct Timeline: View {
             self.items = groupedItems
         }
         self.delegate = delegate
-        self.newMeal = newMeal ?? TimelineItem.emptyMeal
+        self.newItem = newItem ?? TimelineItem.emptyMeal
     }
     
     public var body: some View {
@@ -125,9 +129,9 @@ public struct Timeline: View {
 //    }
     
     var allItems: [TimelineItem] {
-        guard !newMeal.isEmptyItem else {
+        guard !newItem.isEmptyItem else {
             return items
         }
-        return items + [newMeal]
+        return items + [newItem]
     }
 }
