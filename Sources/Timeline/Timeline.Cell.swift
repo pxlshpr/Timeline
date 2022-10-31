@@ -3,10 +3,10 @@ import SwiftUISugar
 
 extension Timeline {
     struct Cell: View {
-        @Environment(\.namespace) var namespace
         @Environment(\.colorScheme) var colorScheme
         @ObservedObject var item: TimelineItem
         var delegate: TimelineDelegate?
+        let matchedGeometryNamespace: SwiftUI.Namespace.ID?
     }
 }
 
@@ -59,12 +59,14 @@ extension Timeline.Cell {
     //MARK: - Components
     var emojiIcon: some View {
         VStack(spacing: 0) {
-//            connector
             ZStack {
                 Group {
                     if !item.emojis.isEmpty {
-                        Timeline.Cell.Grid(emojis: item.emojis)
-                            .font(.system(size: 14))
+                        Timeline.Cell.Grid(
+                            emojis: item.emojis,
+                            matchedGeometryNamespace: matchedGeometryNamespace
+                        )
+                        .font(.system(size: 14))
                     } else if item.isNow {
                         Image(systemName: "clock.fill")
                             .font(.title2)
@@ -78,11 +80,9 @@ extension Timeline.Cell {
                 .padding(10)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-//                        .foregroundColor(item.isNew ? Color(.tertiaryLabel) : Color(.secondarySystemGroupedBackground))
                         .foregroundColor(item.isNew ? Color(.tertiaryLabel) : Color(colorScheme == .dark ? .darkGray : .systemGray5))
                 )
             }
-//            connector
         }
         .frame(width: TimelineTrackWidth)
     }
@@ -98,20 +98,13 @@ extension Timeline.Cell {
             }
 
             return Text("**\(item.dateString)**")
-                .matchedGeometryEffect(id: "date-\(item.id)", in: namespace)
                 .textCase(.uppercase)
                 .font(.footnote)
-//                .font(.subheadline)
-//                .if(registersTapsOnIntervals, transform: { view in
-//                    view
-//                        .foregroundColor(item.isNew ? Color.white : Color(.secondaryLabel))
-//                })
-//                .if(!registersTapsOnIntervals, transform: { view in
-//                    view
-//                        .foregroundColor(.white)
-//                })
-
                 .foregroundColor(foregroundColor)
+                .if(matchedGeometryNamespace != nil) { view in
+                    view
+                        .matchedGeometryEffect(id: "date-\(item.id)", in: matchedGeometryNamespace!)
+                }
         }
         
         
@@ -126,35 +119,24 @@ extension Timeline.Cell {
             }
             
             return HStack {
-//                Text("\(item.isNow ? "Now" : item.titleString)")
-//                    .foregroundColor(item.isNew ? Color.white : Color(.label))
-//                    .bold(item.isNew)
-//                    .font(.title3)
-//                    .matchedGeometryEffect(id: item.id, in: namespaceWrapper.namespace)
-//                    .frame(maxWidth: .infinity, alignment: .leading)
-//                    .fixedSize(horizontal: false, vertical: true)
-//                    .background(.blue)
                 Text("\(item.isNow ? "Now" : item.titleString)")
-                    .matchedGeometryEffect(id: item.id, in: namespace)
-//                    .frame(maxWidth: .infinity, alignment: .leading)
-//                    .fixedSize(horizontal: false, vertical: true)
                     .textCase(.uppercase)
                     .font(.footnote)
-//                    .foregroundColor(Color(.secondaryLabel))
                     .foregroundColor(foregroundColor)
-
+                    .if(matchedGeometryNamespace != nil) { view in
+                        view
+                            .matchedGeometryEffect(id: item.id, in: matchedGeometryNamespace!)
+                    }
                 if item.date.isNow {
                     Text("NOW")
                         .font(.footnote)
                         .bold()
                         .foregroundColor(Color.white)
-//                        .foregroundColor(Color(.secondaryLabel))
                         .padding(.vertical, 4)
                         .padding(.horizontal, 6)
                         .background(
                             RoundedRectangle(cornerRadius: 5)
                                 .foregroundColor(Color(.tertiaryLabel))
-//                                .foregroundColor(Color(.tertiarySystemGroupedBackground))
                         )
                 }
             }

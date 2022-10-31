@@ -3,10 +3,9 @@ import SwiftUISugar
 
 extension Timeline.Cell {
     struct Grid: View {
-        @Environment(\.namespace) var namespace
-        
         let emojis: [Emoji]
         let columnCount = 3
+        let matchedGeometryNamespace: SwiftUI.Namespace.ID?
     }
 }
 
@@ -27,7 +26,6 @@ extension Timeline.Cell.Grid {
                         text(for: emoji)
                     }
                     if emojis.count > 2 * columnCount {
-//                        Text("⋯")
                         Image(systemName: "ellipsis")
                             .foregroundColor(Color(.tertiaryLabel))
                     } else if let lastEmoji = bottomRow.last {
@@ -41,7 +39,10 @@ extension Timeline.Cell.Grid {
     func text(for emoji: Emoji) -> some View {
         Text(emoji.emoji)
             .font(.body)
-            .matchedGeometryEffect(id: emoji.id, in: namespace)
+            .if(matchedGeometryNamespace != nil) { view in
+                view
+                    .matchedGeometryEffect(id: emoji.id, in: matchedGeometryNamespace!)
+            }
     }
 }
 

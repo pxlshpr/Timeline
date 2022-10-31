@@ -4,14 +4,18 @@ public struct Timeline: View {
     
     @Environment(\.colorScheme) var colorScheme
     
+    let matchedGeometryNamespace: SwiftUI.Namespace.ID?
     var items: [TimelineItem]
+    
     //TODO: Stop using @ObservedObject here
     @ObservedObject var newItem: TimelineItem
     var delegate: TimelineDelegate?
     
+    
     public init(
         items: [TimelineItem],
         newItem: TimelineItem? = nil,
+        matchedGeometryNamespace: SwiftUI.Namespace.ID? = nil,
         delegate: TimelineDelegate? = nil
     ) {
         var shouldAddNow: Bool {
@@ -40,6 +44,7 @@ public struct Timeline: View {
         }
         self.delegate = delegate
         self.newItem = newItem ?? TimelineItem.emptyMeal
+        self.matchedGeometryNamespace = matchedGeometryNamespace
     }
     
     public var body: some View {
@@ -64,7 +69,11 @@ public struct Timeline: View {
                         if item.isNow {
                             Timeline.NowCell(item: item, delegate: delegate)
                         } else {
-                            Timeline.Cell(item: item, delegate: delegate)
+                            Cell(
+                                item: item,
+                                delegate: delegate,
+                                matchedGeometryNamespace: matchedGeometryNamespace
+                            )
                         }
                         Timeline.Interval(item: item, sortedItems: sortedItems, delegate: delegate)
                     }
