@@ -1,16 +1,12 @@
 import SwiftUI
 import SwiftUISugar
 
-extension Timeline {
-    struct Cell: View {
-        @Environment(\.colorScheme) var colorScheme
-        @ObservedObject var item: TimelineItem
-        var delegate: TimelineDelegate?
-        let matchedGeometryNamespace: SwiftUI.Namespace.ID?
-    }
-}
-
-extension Timeline.Cell {
+struct Cell: View {
+    
+    @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var item: TimelineItem
+    var delegate: TimelineDelegate?
+    let matchedGeometryNamespace: SwiftUI.Namespace.ID?
     
     var body: some View {
         Group {
@@ -28,32 +24,38 @@ extension Timeline.Cell {
     
     var content: some View {
         ZStack {
-            HStack(spacing: 0) {
-                connector
-                    .frame(width: TimelineTrackWidth)
-                Spacer()
-            }
-            HStack(alignment: .center, spacing: 0) {
-                emojiIcon
-                title
-                Spacer()
-            }
-            .padding(.vertical, 5)
-            .background(
-                Group {
-                    if item.isNew {
-                        RoundedRectangle(cornerRadius: 10.0)
-                            .foregroundColor(Color.accentColor)
-                    }
-                }
-            )
+            connectorLayer
+            labelsLayer
+                .padding(.vertical, 5)
+                .background(labelsBackground)
         }
         .padding(.horizontal, 10)
         .frame(maxWidth: .infinity)
     }
     
     var connectorLayer: some View {
-        connector
+        HStack(spacing: 0) {
+            connector
+                .frame(width: TimelineTrackWidth)
+            Spacer()
+        }
+    }
+    
+    var labelsLayer: some View {
+        HStack(alignment: .center, spacing: 0) {
+            emojiIcon
+            title
+            Spacer()
+        }
+    }
+    
+    var labelsBackground: some View {
+        Group {
+            if item.isNew {
+                RoundedRectangle(cornerRadius: 10.0)
+                    .foregroundColor(Color.accentColor)
+            }
+        }
     }
     
     //MARK: - Components
@@ -62,7 +64,7 @@ extension Timeline.Cell {
             ZStack {
                 Group {
                     if !item.emojis.isEmpty {
-                        Timeline.Cell.Grid(
+                        Cell.Grid(
                             emojis: item.emojis,
                             matchedGeometryNamespace: matchedGeometryNamespace
                         )
@@ -105,6 +107,7 @@ extension Timeline.Cell {
                     view
                         .matchedGeometryEffect(id: "date-\(item.id)", in: matchedGeometryNamespace!)
                 }
+                .transition(.scale)
         }
         
         
@@ -138,8 +141,10 @@ extension Timeline.Cell {
                             RoundedRectangle(cornerRadius: 5)
                                 .foregroundColor(Color(.tertiaryLabel))
                         )
+                        .transition(.scale)
                 }
             }
+            .transition(.scale)
         }
         
         @ViewBuilder
@@ -160,15 +165,5 @@ extension Timeline.Cell {
 //            optionalGroupedItemsTexts
         }
         .padding(.leading)
-    }
-}
-
-extension Date {
-    var isNow: Bool {
-        day == Date().day
-        && month == Date().month
-        && year == Date().year
-        && hour == Date().hour
-        && minute == Date().minute
     }
 }

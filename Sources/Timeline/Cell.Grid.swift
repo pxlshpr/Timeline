@@ -1,7 +1,7 @@
 import SwiftUI
 import SwiftUISugar
 
-extension Timeline.Cell {
+extension Cell {
     struct Grid: View {
         let emojis: [Emoji]
         let columnCount = 3
@@ -9,7 +9,7 @@ extension Timeline.Cell {
     }
 }
 
-extension Timeline.Cell.Grid {
+extension Cell.Grid {
     
     var body: some View {
         Grid(verticalSpacing: 4) {

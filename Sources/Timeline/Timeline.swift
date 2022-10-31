@@ -67,7 +67,7 @@ public struct Timeline: View {
                 ForEach(sortedItems, id: \.self.id) { item in
                     VStack(spacing: 0) {
                         if item.isNow {
-                            Timeline.NowCell(item: item, delegate: delegate)
+                            NowCell(item: item, delegate: delegate)
                         } else {
                             Cell(
                                 item: item,
@@ -75,7 +75,7 @@ public struct Timeline: View {
                                 matchedGeometryNamespace: matchedGeometryNamespace
                             )
                         }
-                        Timeline.Interval(item: item, sortedItems: sortedItems, delegate: delegate)
+                        Interval(item: item, sortedItems: sortedItems, delegate: delegate)
                     }
                 }
             }
