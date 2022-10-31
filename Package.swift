@@ -16,7 +16,7 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.74"),
+        .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.75"),
         .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.210"),
     ],
     targets: [

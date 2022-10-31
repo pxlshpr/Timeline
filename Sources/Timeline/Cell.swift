@@ -129,7 +129,7 @@ struct Cell: View {
                         view
                             .matchedGeometryEffect(id: item.id, in: matchedGeometryNamespace!)
                     }
-                if item.date.isNow {
+                if item.date.isNowToTheMinute {
                     Text("NOW")
                         .font(.footnote)
                         .bold()

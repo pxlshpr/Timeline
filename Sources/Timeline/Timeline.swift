@@ -20,7 +20,7 @@ public struct Timeline: View {
     ) {
         var shouldAddNow: Bool {
             
-            if let newItem, newItem.date.isNow {
+            if let newItem, newItem.date.isNowToTheMinute {
                 return false
             }
             
