@@ -107,6 +107,22 @@ struct Cell: View {
                 .transition(.scale)
         }
         
+        @ViewBuilder
+        var nowLabel: some View {
+            if item.date.isNowToTheMinute {
+                Text("NOW")
+                    .font(.footnote)
+                    .bold()
+                    .foregroundColor(Color.white)
+                    .padding(.vertical, 4)
+                    .padding(.horizontal, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 5)
+                            .foregroundColor(Color(.tertiaryLabel))
+                    )
+                    .transition(.scale)
+            }
+        }
         
         
         var titleText: some View {
@@ -129,19 +145,6 @@ struct Cell: View {
                         view
                             .matchedGeometryEffect(id: item.id, in: matchedGeometryNamespace!)
                     }
-                if item.date.isNowToTheMinute {
-                    Text("NOW")
-                        .font(.footnote)
-                        .bold()
-                        .foregroundColor(Color.white)
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 5)
-                                .foregroundColor(Color(.tertiaryLabel))
-                        )
-                        .transition(.scale)
-                }
             }
             .transition(.scale)
         }
@@ -172,7 +175,9 @@ struct Cell: View {
         
         return HStack {
             VStack(alignment: .leading, spacing: 3) {
-                if !item.isNew {
+                if item.isNew {
+                    nowLabel
+                } else {
                     dateText
                 }
                 titleText
