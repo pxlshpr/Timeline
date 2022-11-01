@@ -11,11 +11,13 @@ public struct Timeline: View {
     @ObservedObject var newItem: TimelineItem
     var delegate: TimelineDelegate?
     
+    let didTapOnNewItem: (() -> ())?
     
     public init(
         items: [TimelineItem],
         newItem: TimelineItem? = nil,
         matchedGeometryNamespace: SwiftUI.Namespace.ID? = nil,
+        didTapOnNewItem: (() -> ())? = nil,
         delegate: TimelineDelegate? = nil
     ) {
         var shouldAddNow: Bool {
@@ -35,6 +37,8 @@ public struct Timeline: View {
             
             return false
         }
+        
+        self.didTapOnNewItem = didTapOnNewItem
         
         let groupedItems = items.groupingWorkouts
         if shouldAddNow {
@@ -69,17 +73,29 @@ public struct Timeline: View {
                         if item.isNow {
                             NowCell(item: item, delegate: delegate)
                         } else {
-                            Cell(
-                                item: item,
-                                delegate: delegate,
-                                matchedGeometryNamespace: matchedGeometryNamespace
-                            )
+                            if item.isNew, let didTapOnNewItem {
+                                Button {
+                                    didTapOnNewItem()
+                                } label: {
+                                    cell(for: item)
+                                }
+                            } else {
+                                cell(for: item)
+                            }
                         }
                         Interval(item: item, sortedItems: sortedItems, delegate: delegate)
                     }
                 }
             }
         }
+    }
+    
+    func cell(for item: TimelineItem) -> some View {
+        Cell(
+            item: item,
+            delegate: delegate,
+            matchedGeometryNamespace: matchedGeometryNamespace
+        )
     }
     
     var sortedItems: [TimelineItem] {
