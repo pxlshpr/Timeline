@@ -74,8 +74,12 @@ public struct Timeline: View {
                     }
                 }
                 .onAppear {
-                    if newItem != TimelineItem.emptyMeal {
-                        scrollViewProxy.scrollTo(newItem.id)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        if newItem != TimelineItem.emptyMeal {
+                            withAnimation {
+                                scrollViewProxy.scrollTo(newItem.id)
+                            }
+                        }
                     }
                 }
             }
