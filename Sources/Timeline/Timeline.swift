@@ -66,28 +66,40 @@ public struct Timeline: View {
     }
     
     var scrollView: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(sortedItems, id: \.self.id) { item in
-                    VStack(spacing: 0) {
-                        if item.isNow {
-                            NowCell(item: item, delegate: delegate)
-                        } else {
-                            if item.isNew, let didTapOnNewItem {
-                                Button {
-                                    didTapOnNewItem()
-                                } label: {
-                                    cell(for: item)
-                                }
-                            } else {
-                                cell(for: item)
-                            }
-                        }
-                        Interval(item: item, sortedItems: sortedItems, delegate: delegate)
+        ScrollViewReader { scrollViewProxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    ForEach(sortedItems, id: \.self.id) { item in
+                        vstack(for: item)
+                    }
+                }
+                .onAppear {
+                    if newItem != TimelineItem.emptyMeal {
+                        scrollViewProxy.scrollTo(newItem.id)
                     }
                 }
             }
         }
+    }
+    
+    func vstack(for item: TimelineItem) -> some View {
+        VStack(spacing: 0) {
+            if item.isNow {
+                NowCell(item: item, delegate: delegate)
+            } else {
+                if item.isNew, let didTapOnNewItem {
+                    Button {
+                        didTapOnNewItem()
+                    } label: {
+                        cell(for: item)
+                    }
+                } else {
+                    cell(for: item)
+                }
+            }
+            Interval(item: item, sortedItems: sortedItems, delegate: delegate)
+        }
+        .tag(item.id)
     }
     
     func cell(for item: TimelineItem) -> some View {
@@ -96,6 +108,7 @@ public struct Timeline: View {
             delegate: delegate,
             matchedGeometryNamespace: matchedGeometryNamespace
         )
+        .tag(item.isNew ? "new" : "")
     }
     
     var sortedItems: [TimelineItem] {

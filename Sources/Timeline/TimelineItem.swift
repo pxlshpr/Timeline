@@ -29,14 +29,12 @@ public class TimelineItem: ObservableObject {
     
     @Published public var date: Date
     public var isNew: Bool
-    
     var id: String
     var name: String
     var duration: TimeInterval?
     var emojis: [Emoji]
     var type: TimelineItemType
     var isEmptyItem: Bool
-    
     var groupedWorkouts: [TimelineItem]
     var isNow: Bool
     
@@ -69,6 +67,33 @@ public class TimelineItem: ObservableObject {
     
     static var emptyMeal: TimelineItem {
         Self.init(id: "", name: "", date: Date(), type: .meal, isEmptyItem: true)
+    }
+}
+
+extension TimelineItem: Hashable, Equatable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(date)
+        hasher.combine(isNew)
+        hasher.combine(id)
+        hasher.combine(name)
+        hasher.combine(duration)
+        hasher.combine(emojis)
+        hasher.combine(type)
+        hasher.combine(isEmptyItem)
+        hasher.combine(groupedWorkouts)
+        hasher.combine(isNow)
+    }
+    public static func ==(lhs: TimelineItem, rhs: TimelineItem) -> Bool {
+        lhs.date == rhs.date
+        && lhs.isNew == rhs.isNew
+        && lhs.id == rhs.id
+        && lhs.name == rhs.name
+        && lhs.duration == rhs.duration
+        && lhs.emojis == rhs.emojis
+        && lhs.type == rhs.type
+        && lhs.isEmptyItem == rhs.isEmptyItem
+        && lhs.groupedWorkouts == rhs.groupedWorkouts
+        && lhs.isNow == rhs.isNow
     }
 }
 
