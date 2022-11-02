@@ -18,6 +18,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         .package(url: "https://github.com/pxlshpr/SwiftSugar", from: "0.0.75"),
         .package(url: "https://github.com/pxlshpr/SwiftUISugar", from: "0.0.210"),
+        .package(url: "https://github.com/pxlshpr/PrepDataTypes", from: "0.0.79"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -27,6 +28,7 @@ let package = Package(
             dependencies: [
                 .product(name: "SwiftSugar", package: "swiftsugar"),
                 .product(name: "SwiftUISugar", package: "swiftuisugar"),
+                .product(name: "PrepDataTypes", package: "prepdatatypes"),
             ]),
         .testTarget(
             name: "TimelineTests",

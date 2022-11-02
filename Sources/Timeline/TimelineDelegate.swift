@@ -1,4 +1,5 @@
 import SwiftUI
+import PrepDataTypes
 
 public protocol TimelineDelegate {
     //TODO: Replace this with saved closures that instead use the optionality of them to decide if they should register taps
