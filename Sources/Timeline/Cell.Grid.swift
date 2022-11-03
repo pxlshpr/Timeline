@@ -46,7 +46,7 @@ extension Cell.Grid {
                 view.matchedGeometryEffect(id: emoji.id, in: namespace!.wrappedValue!)
             }
             .if(namespace?.wrappedValue == nil) { view in
-                view.matchedGeometryEffect(id: "", in: localNamespace)
+                view.matchedGeometryEffect(id: "\(emoji.id)2", in: localNamespace)
             }
     }
 }

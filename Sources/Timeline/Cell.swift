@@ -108,7 +108,7 @@ struct Cell: View {
                     view.matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
                 }
                 .if(namespace?.wrappedValue == nil) { view in
-                    view.matchedGeometryEffect(id: "", in: localNamespace)
+                    view.matchedGeometryEffect(id: "date-\(item.id)2", in: localNamespace)
                 }
                 .transition(.scale)
         }
@@ -151,7 +151,7 @@ struct Cell: View {
                         view.matchedGeometryEffect(id: item.id, in: namespace!.wrappedValue!)
                     }
                     .if(namespace?.wrappedValue == nil) { view in
-                        view.matchedGeometryEffect(id: "", in: localNamespace)
+                        view.matchedGeometryEffect(id: "\(item.id)2", in: localNamespace)
                     }
             }
             .transition(.scale)
@@ -178,7 +178,7 @@ struct Cell: View {
                     view.matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
                 }
                 .if(namespace?.wrappedValue == nil) { view in
-                    view.matchedGeometryEffect(id: "", in: localNamespace)
+                    view.matchedGeometryEffect(id: "date-\(item.id)2", in: localNamespace)
                 }
                 .transition(.scale)
         }
