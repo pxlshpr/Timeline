@@ -5,7 +5,8 @@ public struct Timeline: View {
     
     @Environment(\.colorScheme) var colorScheme
     
-    let matchedGeometryNamespace: SwiftUI.Namespace.ID?
+//    let matchedGeometryNamespace: SwiftUI.Namespace.ID?
+    var namespace: Binding<SwiftUI.Namespace.ID>?
     var items: [TimelineItem]
     
     //TODO: Stop using @ObservedObject here
@@ -17,7 +18,8 @@ public struct Timeline: View {
     public init(
         items: [TimelineItem],
         newItem: TimelineItem? = nil,
-        matchedGeometryNamespace: SwiftUI.Namespace.ID? = nil,
+//        matchedGeometryNamespace: SwiftUI.Namespace.ID? = nil,
+        namespace: Binding<SwiftUI.Namespace.ID>? = nil,
         didTapOnNewItem: (() -> ())? = nil,
         delegate: TimelineDelegate? = nil
     ) {
@@ -49,7 +51,8 @@ public struct Timeline: View {
         }
         self.delegate = delegate
         self.newItem = newItem ?? TimelineItem.emptyMeal
-        self.matchedGeometryNamespace = matchedGeometryNamespace
+        
+        self.namespace = namespace
     }
     
     public var body: some View {
@@ -111,7 +114,7 @@ public struct Timeline: View {
         Cell(
             item: item,
             delegate: delegate,
-            matchedGeometryNamespace: matchedGeometryNamespace
+            namespace: namespace
         )
         .tag(item.isNew ? "new" : "")
     }

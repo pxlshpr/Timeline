@@ -7,8 +7,9 @@ struct Cell: View {
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var item: TimelineItem
     var delegate: TimelineDelegate?
-    let matchedGeometryNamespace: SwiftUI.Namespace.ID?
-    
+//    let matchedGeometryNamespace: SwiftUI.Namespace.ID?
+    var namespace: Binding<SwiftUI.Namespace.ID>?
+
     var body: some View {
         Group {
             if let delegate = delegate, delegate.shouldRegisterTapsOnItems() {
@@ -67,7 +68,7 @@ struct Cell: View {
                     if !item.emojis.isEmpty {
                         Cell.Grid(
                             emojis: item.emojis,
-                            matchedGeometryNamespace: matchedGeometryNamespace
+                            namespace: namespace
                         )
                         .font(.system(size: 14))
                     } else if item.isNow {
@@ -101,9 +102,9 @@ struct Cell: View {
                 .textCase(.uppercase)
                 .font(.footnote)
                 .foregroundColor(foregroundColor)
-                .if(matchedGeometryNamespace != nil) { view in
+                .if(namespace != nil) { view in
                     view
-                        .matchedGeometryEffect(id: "date-\(item.id)", in: matchedGeometryNamespace!)
+                        .matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue)
                 }
                 .transition(.scale)
         }
@@ -142,9 +143,9 @@ struct Cell: View {
 //                    .font(item.isNew ? .title3 : .footnote)
 //                    .bold(item.isNew)
                     .foregroundColor(foregroundColor)
-                    .if(matchedGeometryNamespace != nil) { view in
+                    .if(namespace != nil) { view in
                         view
-                            .matchedGeometryEffect(id: item.id, in: matchedGeometryNamespace!)
+                            .matchedGeometryEffect(id: item.id, in: namespace!.wrappedValue)
                     }
             }
             .transition(.scale)
@@ -167,9 +168,9 @@ struct Cell: View {
                 .textCase(.uppercase)
                 .font(.largeTitle)
                 .foregroundColor(.white)
-                .if(matchedGeometryNamespace != nil) { view in
+                .if(namespace != nil) { view in
                     view
-                        .matchedGeometryEffect(id: "date-\(item.id)", in: matchedGeometryNamespace!)
+                        .matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue)
                 }
                 .transition(.scale)
         }
