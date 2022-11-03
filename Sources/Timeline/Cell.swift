@@ -8,7 +8,7 @@ struct Cell: View {
     @ObservedObject var item: TimelineItem
     var delegate: TimelineDelegate?
 //    let matchedGeometryNamespace: SwiftUI.Namespace.ID?
-    var namespace: Binding<SwiftUI.Namespace.ID>?
+    var namespace: Binding<SwiftUI.Namespace.ID?>?
 
     var body: some View {
         Group {
@@ -102,9 +102,9 @@ struct Cell: View {
                 .textCase(.uppercase)
                 .font(.footnote)
                 .foregroundColor(foregroundColor)
-                .if(namespace != nil) { view in
+                .if(namespace?.wrappedValue != nil) { view in
                     view
-                        .matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue)
+                        .matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
                 }
                 .transition(.scale)
         }
@@ -143,9 +143,9 @@ struct Cell: View {
 //                    .font(item.isNew ? .title3 : .footnote)
 //                    .bold(item.isNew)
                     .foregroundColor(foregroundColor)
-                    .if(namespace != nil) { view in
+                    .if(namespace?.wrappedValue != nil) { view in
                         view
-                            .matchedGeometryEffect(id: item.id, in: namespace!.wrappedValue)
+                            .matchedGeometryEffect(id: item.id, in: namespace!.wrappedValue!)
                     }
             }
             .transition(.scale)
@@ -168,9 +168,9 @@ struct Cell: View {
                 .textCase(.uppercase)
                 .font(.largeTitle)
                 .foregroundColor(.white)
-                .if(namespace != nil) { view in
+                .if(namespace?.wrappedValue != nil) { view in
                     view
-                        .matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue)
+                        .matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
                 }
                 .transition(.scale)
         }

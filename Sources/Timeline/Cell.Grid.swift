@@ -7,7 +7,7 @@ extension Cell {
         let emojis: [Emoji]
         let columnCount = 3
 //        let matchedGeometryNamespace: SwiftUI.Namespace.ID?
-        var namespace: Binding<SwiftUI.Namespace.ID>?
+        var namespace: Binding<SwiftUI.Namespace.ID?>?
     }
 }
 
@@ -41,9 +41,9 @@ extension Cell.Grid {
     func text(for emoji: Emoji) -> some View {
         Text(emoji.emoji)
             .font(.body)
-            .if(namespace != nil) { view in
+            .if(namespace?.wrappedValue != nil) { view in
                 view
-                    .matchedGeometryEffect(id: emoji.id, in: namespace!.wrappedValue)
+                    .matchedGeometryEffect(id: emoji.id, in: namespace!.wrappedValue!)
             }
     }
 }
