@@ -140,6 +140,7 @@ struct Cell: View {
             
             return HStack {
                 Text("\(item.isNow ? "Now" : item.titleString)")
+                    .multilineTextAlignment(.leading)
                     .textCase(.uppercase)
                     .font(.footnote)
 //                    .font(item.isNew ? .title3 : .footnote)
