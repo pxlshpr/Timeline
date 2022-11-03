@@ -100,7 +100,8 @@ struct Cell: View {
                 delegate == nil ? Color(.secondaryLabel) : Color(.secondaryLabel)
             }
 
-            return Text("**\(item.dateString)**")
+//            return Text("**\(item.dateString)**")
+            return Text("**\(item.timeString)**")
                 .textCase(.uppercase)
                 .font(.footnote)
                 .foregroundColor(foregroundColor)
@@ -189,6 +190,12 @@ struct Cell: View {
                 newDateText
             }
         }
+    }
+}
+
+extension TimelineItem {
+    var timeString: String {
+        date.formatted(date: .omitted, time: .shortened).lowercased()
     }
 }
 
