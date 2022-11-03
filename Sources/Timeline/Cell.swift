@@ -6,11 +6,10 @@ struct Cell: View {
     
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var item: TimelineItem
-    @Namespace var localNamespace
     
     var delegate: TimelineDelegate?
-//    let matchedGeometryNamespace: SwiftUI.Namespace.ID?
-    var namespace: Binding<SwiftUI.Namespace.ID?>?
+    let namespace: Namespace.ID?
+    var namespacePrefix: Binding<UUID>?
 
     var body: some View {
         Group {
@@ -70,7 +69,8 @@ struct Cell: View {
                     if !item.emojis.isEmpty {
                         Cell.Grid(
                             emojis: item.emojis,
-                            namespace: namespace
+                            namespace: namespace,
+                            namespacePrefix: namespacePrefix
                         )
                         .font(.system(size: 14))
                     } else if item.isNow {
@@ -104,11 +104,8 @@ struct Cell: View {
                 .textCase(.uppercase)
                 .font(.footnote)
                 .foregroundColor(foregroundColor)
-                .if(namespace?.wrappedValue != nil) { view in
-                    view.matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
-                }
-                .if(namespace?.wrappedValue == nil) { view in
-                    view.matchedGeometryEffect(id: "date-\(item.id)2", in: localNamespace)
+                .if(namespace != nil && namespacePrefix != nil) { view in
+                    view.matchedGeometryEffect(id: "date-\(item.id)-\(namespacePrefix!.wrappedValue.uuidString)", in: namespace!)
                 }
                 .transition(.scale)
         }
@@ -147,11 +144,8 @@ struct Cell: View {
 //                    .font(item.isNew ? .title3 : .footnote)
 //                    .bold(item.isNew)
                     .foregroundColor(foregroundColor)
-                    .if(namespace?.wrappedValue != nil) { view in
-                        view.matchedGeometryEffect(id: item.id, in: namespace!.wrappedValue!)
-                    }
-                    .if(namespace?.wrappedValue == nil) { view in
-                        view.matchedGeometryEffect(id: "\(item.id)2", in: localNamespace)
+                    .if(namespace != nil && namespacePrefix != nil) { view in
+                        view.matchedGeometryEffect(id: "\(item.id)-\(namespacePrefix!.wrappedValue.uuidString)", in: namespace!)
                     }
             }
             .transition(.scale)
@@ -174,11 +168,8 @@ struct Cell: View {
                 .textCase(.uppercase)
                 .font(.largeTitle)
                 .foregroundColor(.white)
-                .if(namespace?.wrappedValue != nil) { view in
-                    view.matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
-                }
-                .if(namespace?.wrappedValue == nil) { view in
-                    view.matchedGeometryEffect(id: "date-\(item.id)2", in: localNamespace)
+                .if(namespace != nil && namespacePrefix != nil) { view in
+                    view.matchedGeometryEffect(id: "date-\(item.id)-\(namespacePrefix!.wrappedValue.uuidString)", in: namespace!)
                 }
                 .transition(.scale)
         }

@@ -4,11 +4,11 @@ import PrepDataTypes
 
 extension Cell {
     struct Grid: View {
-        @Namespace var localNamespace
         let emojis: [Emoji]
         let columnCount = 3
-//        let matchedGeometryNamespace: SwiftUI.Namespace.ID?
-        var namespace: Binding<SwiftUI.Namespace.ID?>?
+        
+        let namespace: Namespace.ID?
+        var namespacePrefix: Binding<UUID>?
     }
 }
 
@@ -42,11 +42,8 @@ extension Cell.Grid {
     func text(for emoji: Emoji) -> some View {
         Text(emoji.emoji)
             .font(.body)
-            .if(namespace?.wrappedValue != nil) { view in
-                view.matchedGeometryEffect(id: emoji.id, in: namespace!.wrappedValue!)
-            }
-            .if(namespace?.wrappedValue == nil) { view in
-                view.matchedGeometryEffect(id: "\(emoji.id)2", in: localNamespace)
+            .if(namespace != nil && namespacePrefix != nil) { view in
+                view.matchedGeometryEffect(id: "\(emoji.id)-\(namespacePrefix!.wrappedValue.uuidString)", in: namespace!)
             }
     }
 }
