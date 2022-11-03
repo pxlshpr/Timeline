@@ -6,6 +6,8 @@ struct Cell: View {
     
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var item: TimelineItem
+    @Namespace var localNamespace
+    
     var delegate: TimelineDelegate?
 //    let matchedGeometryNamespace: SwiftUI.Namespace.ID?
     var namespace: Binding<SwiftUI.Namespace.ID?>?
@@ -103,8 +105,10 @@ struct Cell: View {
                 .font(.footnote)
                 .foregroundColor(foregroundColor)
                 .if(namespace?.wrappedValue != nil) { view in
-                    view
-                        .matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
+                    view.matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
+                }
+                .if(namespace?.wrappedValue == nil) { view in
+                    view.matchedGeometryEffect(id: "", in: localNamespace)
                 }
                 .transition(.scale)
         }
@@ -144,8 +148,10 @@ struct Cell: View {
 //                    .bold(item.isNew)
                     .foregroundColor(foregroundColor)
                     .if(namespace?.wrappedValue != nil) { view in
-                        view
-                            .matchedGeometryEffect(id: item.id, in: namespace!.wrappedValue!)
+                        view.matchedGeometryEffect(id: item.id, in: namespace!.wrappedValue!)
+                    }
+                    .if(namespace?.wrappedValue == nil) { view in
+                        view.matchedGeometryEffect(id: "", in: localNamespace)
                     }
             }
             .transition(.scale)
@@ -169,8 +175,10 @@ struct Cell: View {
                 .font(.largeTitle)
                 .foregroundColor(.white)
                 .if(namespace?.wrappedValue != nil) { view in
-                    view
-                        .matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
+                    view.matchedGeometryEffect(id: "date-\(item.id)", in: namespace!.wrappedValue!)
+                }
+                .if(namespace?.wrappedValue == nil) { view in
+                    view.matchedGeometryEffect(id: "", in: localNamespace)
                 }
                 .transition(.scale)
         }

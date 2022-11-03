@@ -4,6 +4,7 @@ import PrepDataTypes
 
 extension Cell {
     struct Grid: View {
+        @Namespace var localNamespace
         let emojis: [Emoji]
         let columnCount = 3
 //        let matchedGeometryNamespace: SwiftUI.Namespace.ID?
@@ -42,8 +43,10 @@ extension Cell.Grid {
         Text(emoji.emoji)
             .font(.body)
             .if(namespace?.wrappedValue != nil) { view in
-                view
-                    .matchedGeometryEffect(id: emoji.id, in: namespace!.wrappedValue!)
+                view.matchedGeometryEffect(id: emoji.id, in: namespace!.wrappedValue!)
+            }
+            .if(namespace?.wrappedValue == nil) { view in
+                view.matchedGeometryEffect(id: "", in: localNamespace)
             }
     }
 }
