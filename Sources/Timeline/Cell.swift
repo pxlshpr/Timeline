@@ -8,8 +8,6 @@ struct Cell: View {
     @ObservedObject var item: TimelineItem
     
     var delegate: TimelineDelegate?
-    let namespace: Namespace.ID?
-    var namespacePrefix: Binding<UUID>?
 
     var body: some View {
         Group {
@@ -68,9 +66,7 @@ struct Cell: View {
                 Group {
                     if !item.emojis.isEmpty {
                         Cell.Grid(
-                            emojis: item.emojis,
-                            namespace: namespace,
-                            namespacePrefix: namespacePrefix
+                            emojis: item.emojis
                         )
                         .font(.system(size: 14))
                     } else if item.isNow {
@@ -105,9 +101,6 @@ struct Cell: View {
                 .textCase(.uppercase)
                 .font(.footnote)
                 .foregroundColor(foregroundColor)
-                .if(namespace != nil && namespacePrefix != nil) { view in
-                    view.matchedGeometryEffect(id: "date-\(item.id)-\(namespacePrefix!.wrappedValue.uuidString)", in: namespace!)
-                }
                 .transition(.scale)
         }
         
@@ -146,9 +139,6 @@ struct Cell: View {
 //                    .font(item.isNew ? .title3 : .footnote)
 //                    .bold(item.isNew)
                     .foregroundColor(foregroundColor)
-                    .if(namespace != nil && namespacePrefix != nil) { view in
-                        view.matchedGeometryEffect(id: "\(item.id)-\(namespacePrefix!.wrappedValue.uuidString)", in: namespace!)
-                    }
             }
             .transition(.scale)
         }
@@ -170,9 +160,6 @@ struct Cell: View {
                 .textCase(.uppercase)
                 .font(.largeTitle)
                 .foregroundColor(.white)
-                .if(namespace != nil && namespacePrefix != nil) { view in
-                    view.matchedGeometryEffect(id: "date-\(item.id)-\(namespacePrefix!.wrappedValue.uuidString)", in: namespace!)
-                }
                 .transition(.scale)
         }
         

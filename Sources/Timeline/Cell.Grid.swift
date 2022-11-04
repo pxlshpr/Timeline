@@ -6,9 +6,6 @@ extension Cell {
     struct Grid: View {
         let emojis: [Emoji]
         let columnCount = 3
-        
-        let namespace: Namespace.ID?
-        var namespacePrefix: Binding<UUID>?
     }
 }
 
@@ -42,9 +39,6 @@ extension Cell.Grid {
     func text(for emoji: Emoji) -> some View {
         Text(emoji.emoji)
             .font(.body)
-            .if(namespace != nil && namespacePrefix != nil) { view in
-                view.matchedGeometryEffect(id: "\(emoji.id)-\(namespacePrefix!.wrappedValue.uuidString)", in: namespace!)
-            }
     }
 }
 
