@@ -21,11 +21,46 @@ struct Interval: View {
         }
     }
     
+//    var body: some View {
+//        HStack {
+//            VStack(spacing: 0) {
+//                if let timeInterval = timeInterval(for: item) {
+//                    connector
+//                        .frame(height: ConnectorHeight)
+//                    if timeInterval > 60 {
+//                        if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals(), timeIntervalShouldBeButton {
+//                            Button {
+//                                guard let nextItem = nextItem(to: item) else {
+//                                    return
+//                                }
+//                                delegate.didTapInterval(between: item, and: nextItem)
+//                            } label: {
+//                                timeIntervalButton(for: timeInterval)
+//                            }
+//                            connector
+//                                .frame(height: ConnectorHeight)
+//                        } else {
+//                            timeIntervalView(for: timeInterval)
+//                            connector
+//                                .frame(height: ConnectorHeight)
+//                        }
+//                    }
+//                }
+//            }
+//            .frame(width: TimelineTrackWidth)
+//            .padding(.leading, 10)
+//            Spacer()
+//        }
+//    }
+    
+    
     func content(for timeInterval: TimeInterval) -> some View {
         //TODO: Remove connectors eventually once we confirm that they're not needed
         Group {
-            Spacer()
+            connector
                 .frame(height: ConnectorHeight)
+//            Spacer()
+//                .frame(height: ConnectorHeight)
             if timeInterval > 60 {
                 Group {
                     if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals(), timeIntervalShouldBeButton {
@@ -36,8 +71,10 @@ struct Interval: View {
                 }
                 .transition(.scale)
                 .zIndex(1)
-                Spacer()
+                connector
                     .frame(height: ConnectorHeight)
+//                Spacer()
+//                    .frame(height: ConnectorHeight)
             }
         }
     }
