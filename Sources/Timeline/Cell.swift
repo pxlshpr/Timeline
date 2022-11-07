@@ -2,6 +2,15 @@ import SwiftUI
 import SwiftUISugar
 import PrepDataTypes
 
+struct SearchableViewButtonStyle: ButtonStyle {
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .shadow(radius: configuration.isPressed ? 20 : 0)
+            .grayscale(configuration.isPressed ? 0.5 : 0)
+            .scaleEffect(configuration.isPressed ? 1.01 : 1)
+    }
+}
+
 struct Cell: View {
     
     @Environment(\.colorScheme) var colorScheme
@@ -17,6 +26,7 @@ struct Cell: View {
                 } label: {
                     content
                 }
+//                .buttonStyle(SearchableViewButtonStyle())
             } else {
                 content
             }
@@ -198,6 +208,10 @@ extension ViewModel: TimelineDelegate {
         }
     }
     
+    func shouldRegisterTapsOnItems() -> Bool {
+        true
+    }
+    
     func shouldRegisterTapsOnIntervals() -> Bool {
         true
     }
@@ -290,3 +304,5 @@ struct TimelinePreview_Previews: PreviewProvider {
 //            .preferredColorScheme(.dark)
     }
 }
+
+
