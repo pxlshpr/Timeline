@@ -2,12 +2,15 @@ import SwiftUI
 import SwiftUISugar
 import PrepDataTypes
 
-struct SearchableViewButtonStyle: ButtonStyle {
+struct TimelineItemButtonStyle: ButtonStyle {
+    
     func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
-            .shadow(radius: configuration.isPressed ? 20 : 0)
-            .grayscale(configuration.isPressed ? 0.5 : 0)
+        return configuration.label
+            .shadow(color: Color(.systemFill), radius: configuration.isPressed ? 5 : 0)
+            .grayscale(configuration.isPressed ? 0.8 : 0)
             .scaleEffect(configuration.isPressed ? 1.01 : 1)
+            .animation(.interactiveSpring(), value: configuration.isPressed)
+
     }
 }
 
@@ -26,7 +29,7 @@ struct Cell: View {
                 } label: {
                     content
                 }
-//                .buttonStyle(SearchableViewButtonStyle())
+                .buttonStyle(TimelineItemButtonStyle())
             } else {
                 content
             }
@@ -207,7 +210,7 @@ extension ViewModel: TimelineDelegate {
             newMeal.date = Date()
         }
     }
-    
+        
     func shouldRegisterTapsOnItems() -> Bool {
         true
     }
