@@ -3,6 +3,7 @@ import PrepDataTypes
 
 public protocol TimelineDelegate {
     //TODO: Replace this with saved closures that instead use the optionality of them to decide if they should register taps
+    func shouldStylizeTappableItems() -> Bool
     func shouldRegisterTapsOnItems() -> Bool
     func shouldRegisterTapsOnIntervals() -> Bool
     func didTapItem(_ item: TimelineItem)
@@ -15,4 +16,5 @@ public extension TimelineDelegate {
     func didTapInterval(between item1: TimelineItem, and item2: TimelineItem) { }
     func shouldRegisterTapsOnItems() -> Bool { false }
     func shouldRegisterTapsOnIntervals() -> Bool { false }
+    func shouldStylizeTappableItems() -> Bool { false }
 }

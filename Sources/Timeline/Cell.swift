@@ -74,7 +74,19 @@ struct Cell: View {
     
     //MARK: - Components
     var emojiIcon: some View {
-        VStack(spacing: 0) {
+        
+        var backgroundColor: Color {
+//            guard delegate?.shouldStylizeTappableItems() == false else {
+//                return .accentColor
+//            }
+            if item.isNew {
+                return Color(.tertiaryLabel)
+            } else {
+                return Color(colorScheme == .dark ? .darkGray : .systemGray5)
+            }
+        }
+        
+        return VStack(spacing: 0) {
             ZStack {
                 Group {
                     if !item.emojis.isEmpty {
@@ -95,7 +107,7 @@ struct Cell: View {
                 .padding(10)
                 .background(
                     RoundedRectangle(cornerRadius: 8)
-                        .foregroundColor(item.isNew ? Color(.tertiaryLabel) : Color(colorScheme == .dark ? .darkGray : .systemGray5))
+                        .foregroundColor(backgroundColor)
                 )
             }
         }
@@ -106,13 +118,23 @@ struct Cell: View {
         
         var dateText: some View {
             var foregroundColor: Color {
-                delegate == nil ? Color(.secondaryLabel) : Color(.secondaryLabel)
+                guard delegate?.shouldStylizeTappableItems() == false else {
+                    return .accentColor
+                }
+                return delegate == nil ? Color(.secondaryLabel) : Color(.secondaryLabel)
             }
 
+            var font: Font {
+                guard delegate?.shouldStylizeTappableItems() == false else {
+                    return .largeTitle
+                }
+                return .footnote
+            }
+            
 //            return Text("**\(item.dateString)**")
             return Text("**\(item.timeString)**")
                 .textCase(.uppercase)
-                .font(.footnote)
+                .font(font)
                 .foregroundColor(foregroundColor)
                 .transition(.scale)
         }
@@ -137,6 +159,9 @@ struct Cell: View {
         
         var titleText: some View {
             var foregroundColor: Color {
+//                guard delegate?.shouldStylizeTappableItems() == false else {
+//                    return .accentColor
+//                }
                 if delegate == nil {
                     return Color(.label)
                 } else {
@@ -149,8 +174,7 @@ struct Cell: View {
                     .multilineTextAlignment(.leading)
                     .textCase(.uppercase)
                     .font(.footnote)
-//                    .font(item.isNew ? .title3 : .footnote)
-//                    .bold(item.isNew)
+//                    .bold(delegate?.shouldStylizeTappableItems() == true)
                     .foregroundColor(foregroundColor)
             }
             .transition(.scale)
@@ -215,8 +239,12 @@ extension ViewModel: TimelineDelegate {
         true
     }
     
-    func shouldRegisterTapsOnIntervals() -> Bool {
+    func shouldStylizeTappableItems() -> Bool {
         true
+    }
+    
+    func shouldRegisterTapsOnIntervals() -> Bool {
+        false
     }
     
     func didTapInterval(between item1: TimelineItem, and item2: TimelineItem) {
