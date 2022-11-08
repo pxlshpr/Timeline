@@ -2,30 +2,19 @@ import SwiftUI
 import SwiftUISugar
 import PrepDataTypes
 
-struct TimelineItemButtonStyle: ButtonStyle {
-    
-    func makeBody(configuration: Self.Configuration) -> some View {
-        return configuration.label
-            .shadow(color: Color(.systemFill), radius: configuration.isPressed ? 5 : 0)
-            .grayscale(configuration.isPressed ? 0.8 : 0)
-            .scaleEffect(configuration.isPressed ? 1.01 : 1)
-            .animation(.interactiveSpring(), value: configuration.isPressed)
-
-    }
-}
-
 struct Cell: View {
     
     @Environment(\.colorScheme) var colorScheme
     @ObservedObject var item: TimelineItem
     
-    var delegate: TimelineDelegate?
+    let didTapItem: ((TimelineItem) -> ())?
+    let shouldStylizeTappableItems: Bool
 
     var body: some View {
         Group {
-            if let delegate = delegate, delegate.shouldRegisterTapsOnItems() {
+            if let didTapItem {
                 Button {
-                    delegate.didTapItem(item)
+                    didTapItem(item)
                 } label: {
                     content
                 }
@@ -76,9 +65,6 @@ struct Cell: View {
     var emojiIcon: some View {
         
         var backgroundColor: Color {
-//            guard delegate?.shouldStylizeTappableItems() == false else {
-//                return .accentColor
-//            }
             if item.isNew {
                 return Color(.tertiaryLabel)
             } else {
@@ -118,20 +104,19 @@ struct Cell: View {
         
         var dateText: some View {
             var foregroundColor: Color {
-                guard delegate?.shouldStylizeTappableItems() == false else {
+                if shouldStylizeTappableItems, didTapItem != nil {
                     return .accentColor
                 }
-                return delegate == nil ? Color(.secondaryLabel) : Color(.secondaryLabel)
+                return Color(.secondaryLabel)
             }
 
             var font: Font {
-                guard delegate?.shouldStylizeTappableItems() == false else {
+                if shouldStylizeTappableItems, didTapItem != nil {
                     return .largeTitle
                 }
                 return .footnote
             }
             
-//            return Text("**\(item.dateString)**")
             return Text("**\(item.timeString)**")
                 .textCase(.uppercase)
                 .font(font)
@@ -159,14 +144,7 @@ struct Cell: View {
         
         var titleText: some View {
             var foregroundColor: Color {
-//                guard delegate?.shouldStylizeTappableItems() == false else {
-//                    return .accentColor
-//                }
-                if delegate == nil {
-                    return Color(.label)
-                } else {
-                    return item.isNew ? .white : Color(.label)
-                }
+                item.isNew ? .white : Color(.label)
             }
             
             return HStack {
@@ -174,7 +152,6 @@ struct Cell: View {
                     .multilineTextAlignment(.leading)
                     .textCase(.uppercase)
                     .font(.footnote)
-//                    .bold(delegate?.shouldStylizeTappableItems() == true)
                     .foregroundColor(foregroundColor)
             }
             .transition(.scale)
@@ -224,116 +201,118 @@ extension TimelineItem {
     }
 }
 
-class ViewModel: ObservableObject {
-    @Published var newMeal: TimelineItem = TimelineItem(name: "Big Post-Workout Meal Here is a long name, like really long", date: date(hour: 16), isNew: true)
-}
-
-extension ViewModel: TimelineDelegate {
-    func didTapNow() {
-        withAnimation {
-            newMeal.date = Date()
-        }
-    }
-        
-    func shouldRegisterTapsOnItems() -> Bool {
-        true
-    }
-    
-    func shouldStylizeTappableItems() -> Bool {
-        true
-    }
-    
-    func shouldRegisterTapsOnIntervals() -> Bool {
-        false
-    }
-    
-    func didTapInterval(between item1: TimelineItem, and item2: TimelineItem) {
-        guard !(item1.isNew || item2.isNew) else {
-            return
-        }
-        guard item2.date > item1.date else {
-            return
-        }
-        let midPoint = ((item2.date.timeIntervalSince1970 - item1.date.timeIntervalSince1970) / 2.0) + item1.date.timeIntervalSince1970
-        let midPointDate = Date(timeIntervalSince1970: midPoint)
-        withAnimation {
-            newMeal.date = midPointDate
-        }
-    }
-}
-
-import SwiftSugar
-
-struct TimelinePreview: View {
-    
-    let items: [TimelineItem] = [
-        TimelineItem(name: "Pre-workout Meal", date: date(hour: 15, minute: 30), emojiStrings: []),
-        TimelineItem(name: "Walking", date: date(hour: 16, minute: 29), duration: 707, emojiStrings: ["🚶"], type: .workout),
-        TimelineItem(name: "Flexibility", date: date(hour: 16, minute: 41), duration: 248, emojiStrings: ["🙆"], type: .workout),
-        TimelineItem(name: "Traditional Strength Training", date: date(hour: 16, minute: 45), duration: 10909, emojiStrings: ["🏋🏽‍♂️"], type: .workout),
-        TimelineItem(name: "Intra-workout Snack", date: date(hour: 17, minute: 30), emojiStrings: ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅", "🍕"]),
-        TimelineItem(name: "Post-workout Meal", date: date(hour: 20, minute: 40), emojiStrings: ["🍆", "🍐", "🍊", "🍌"]),
-        TimelineItem(name: "Walking", date: date(hour: 22, minute: 30), duration: 50, emojiStrings: [], type: .workout),
-        TimelineItem(name: "Snack", date: date(hour: 22), emojiStrings: ["🍆"]),
-        TimelineItem(name: "Dinner", date: date(hour: 23), emojiStrings: ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅"])
-    ]
-    
-    @StateObject var viewModel = ViewModel()
-    
-    @State var isForNewMeal: Bool = true
-    
-    var body: some View {
-        NavigationView {
-            Group {
-                if isForNewMeal {
-                    Timeline(items: items, newItem: viewModel.newMeal, delegate: viewModel)
-                } else {
-                    Timeline(items: items)
-                }
-            }
-            .toolbar { navigationTrailingContent }
-            .toolbar { navigationLeadingContent }
-            .background(Color(.tertiarySystemGroupedBackground))
-        }
-    }
-    
-    var navigationLeadingContent: some ToolbarContent {
-        ToolbarItemGroup(placement: .navigationBarLeading) {
-            Picker("", selection: $isForNewMeal) {
-                Text("Timeline").tag(false)
-                Text("New Meal").tag(true)
-            }
-            .pickerStyle(.segmented)
-        }
-    }
-    
-    var navigationTrailingContent: some ToolbarContent {
-        ToolbarItemGroup(placement: .navigationBarTrailing) {
-            if isForNewMeal {
-                Button {
-                    withAnimation {
-                        viewModel.newMeal.date = viewModel.newMeal.date.addingTimeInterval(-3600)
-                    }
-                } label: {
-                    Image(systemName: "gobackward.60")
-                }
-                Button {
-                    withAnimation {
-                        viewModel.newMeal.date = viewModel.newMeal.date.addingTimeInterval(3600)
-                    }
-                } label: {
-                    Image(systemName: "goforward.60")
-                }
-            }
-        }
-    }
-}
-
-struct TimelinePreview_Previews: PreviewProvider {
-    static var previews: some View {
-        TimelinePreview()
-//            .preferredColorScheme(.dark)
-    }
-}
-
-
+//class ViewModel: ObservableObject {
+//    @Published var newMeal: TimelineItem = TimelineItem(name: "Big Post-Workout Meal Here is a long name, like really long", date: date(hour: 16), isNew: true)
+//}
+//
+//extension ViewModel: TimelineDelegate {
+//    func didTapNow() {
+//        withAnimation {
+//            newMeal.date = Date()
+//        }
+//    }
+//
+//    func shouldRegisterTapsOnItems() -> Bool {
+//        true
+//    }
+//
+//    func shouldStylizeTappableItems() -> Bool {
+//        true
+//    }
+//
+//    func shouldRegisterTapsOnIntervals() -> Bool {
+//        false
+//    }
+//
+//    func didTapInterval(between item1: TimelineItem, and item2: TimelineItem) {
+//        guard !(item1.isNew || item2.isNew) else {
+//            return
+//        }
+//        guard item2.date > item1.date else {
+//            return
+//        }
+//        let midPoint = ((item2.date.timeIntervalSince1970 - item1.date.timeIntervalSince1970) / 2.0) + item1.date.timeIntervalSince1970
+//        let midPointDate = Date(timeIntervalSince1970: midPoint)
+//        withAnimation {
+//            newMeal.date = midPointDate
+//        }
+//    }
+//}
+//
+//import SwiftSugar
+//
+//struct TimelinePreview: View {
+//
+//    let items: [TimelineItem] = [
+//        TimelineItem(name: "Pre-workout Meal", date: date(hour: 15, minute: 30), emojiStrings: []),
+//        TimelineItem(name: "Walking", date: date(hour: 16, minute: 29), duration: 707, emojiStrings: ["🚶"], type: .workout),
+//        TimelineItem(name: "Flexibility", date: date(hour: 16, minute: 41), duration: 248, emojiStrings: ["🙆"], type: .workout),
+//        TimelineItem(name: "Traditional Strength Training", date: date(hour: 16, minute: 45), duration: 10909, emojiStrings: ["🏋🏽‍♂️"], type: .workout),
+//        TimelineItem(name: "Intra-workout Snack", date: date(hour: 17, minute: 30), emojiStrings: ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅", "🍕"]),
+//        TimelineItem(name: "Post-workout Meal", date: date(hour: 20, minute: 40), emojiStrings: ["🍆", "🍐", "🍊", "🍌"]),
+//        TimelineItem(name: "Walking", date: date(hour: 22, minute: 30), duration: 50, emojiStrings: [], type: .workout),
+//        TimelineItem(name: "Snack", date: date(hour: 22), emojiStrings: ["🍆"]),
+//        TimelineItem(name: "Dinner", date: date(hour: 23), emojiStrings: ["🍆", "🍐", "🍊", "🍌", "🫒", "🧅"])
+//    ]
+//
+//    @StateObject var viewModel = ViewModel()
+//
+//    @State var isForNewMeal: Bool = true
+//
+//    var body: some View {
+//        NavigationView {
+//            Group {
+//                if isForNewMeal {
+//                    Timeline(
+//                        items: items,
+//                        newItem: viewModel.newMeal,
+//                        delegate: viewModel
+//                    )
+//                } else {
+//                    Timeline(items: items)
+//                }
+//            }
+//            .toolbar { navigationTrailingContent }
+//            .toolbar { navigationLeadingContent }
+//            .background(Color(.tertiarySystemGroupedBackground))
+//        }
+//    }
+//
+//    var navigationLeadingContent: some ToolbarContent {
+//        ToolbarItemGroup(placement: .navigationBarLeading) {
+//            Picker("", selection: $isForNewMeal) {
+//                Text("Timeline").tag(false)
+//                Text("New Meal").tag(true)
+//            }
+//            .pickerStyle(.segmented)
+//        }
+//    }
+//
+//    var navigationTrailingContent: some ToolbarContent {
+//        ToolbarItemGroup(placement: .navigationBarTrailing) {
+//            if isForNewMeal {
+//                Button {
+//                    withAnimation {
+//                        viewModel.newMeal.date = viewModel.newMeal.date.addingTimeInterval(-3600)
+//                    }
+//                } label: {
+//                    Image(systemName: "gobackward.60")
+//                }
+//                Button {
+//                    withAnimation {
+//                        viewModel.newMeal.date = viewModel.newMeal.date.addingTimeInterval(3600)
+//                    }
+//                } label: {
+//                    Image(systemName: "goforward.60")
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//struct TimelinePreview_Previews: PreviewProvider {
+//    static var previews: some View {
+//        TimelinePreview()
+////            .preferredColorScheme(.dark)
+//    }
+//}

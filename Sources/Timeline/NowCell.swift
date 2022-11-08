@@ -4,23 +4,20 @@ import PrepDataTypes
 struct NowCell: View {
     
     @ObservedObject var item: TimelineItem
-    var delegate: TimelineDelegate?
     
+    let didTapNow: (() -> ())?
+
     var body: some View {
         Group {
-            if isButton {
+            if let didTapNow {
                 Button("") {
-                    delegate?.didTapNow()
+                    didTapNow()
                 }
                 .buttonStyle(NowButtonStyle())
             } else {
                 Content(isButton: false)
             }
         }
-    }
-    
-    var isButton: Bool {
-        delegate?.shouldRegisterTapsOnIntervals() ?? false
-    }
+    }    
 }
 

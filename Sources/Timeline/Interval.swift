@@ -6,8 +6,8 @@ struct Interval: View {
     
     @ObservedObject var item: TimelineItem
     var sortedItems: [TimelineItem]
-    var delegate: TimelineDelegate?
-    
+    let didTapInterval: ((TimelineItem, TimelineItem) -> ())?
+
     var body: some View {
         HStack {
             VStack(spacing: 0) {
@@ -21,70 +21,32 @@ struct Interval: View {
         }
     }
     
-//    var body: some View {
-//        HStack {
-//            VStack(spacing: 0) {
-//                if let timeInterval = timeInterval(for: item) {
-//                    connector
-//                        .frame(height: ConnectorHeight)
-//                    if timeInterval > 60 {
-//                        if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals(), timeIntervalShouldBeButton {
-//                            Button {
-//                                guard let nextItem = nextItem(to: item) else {
-//                                    return
-//                                }
-//                                delegate.didTapInterval(between: item, and: nextItem)
-//                            } label: {
-//                                timeIntervalButton(for: timeInterval)
-//                            }
-//                            connector
-//                                .frame(height: ConnectorHeight)
-//                        } else {
-//                            timeIntervalView(for: timeInterval)
-//                            connector
-//                                .frame(height: ConnectorHeight)
-//                        }
-//                    }
-//                }
-//            }
-//            .frame(width: TimelineTrackWidth)
-//            .padding(.leading, 10)
-//            Spacer()
-//        }
-//    }
-    
-    
     func content(for timeInterval: TimeInterval) -> some View {
-        //TODO: Remove connectors eventually once we confirm that they're not needed
         Group {
-            connector
+            Spacer()
                 .frame(height: ConnectorHeight)
-//            Spacer()
-//                .frame(height: ConnectorHeight)
             if timeInterval > 60 {
                 Group {
-                    if let delegate = delegate, delegate.shouldRegisterTapsOnIntervals(), timeIntervalShouldBeButton {
-                        button(for: timeInterval, delegate: delegate)
+                    if didTapInterval != nil, timeIntervalShouldBeButton {
+                        button(for: timeInterval)
                     } else {
                         label(for: timeInterval)
                     }
                 }
                 .transition(.scale)
                 .zIndex(1)
-                connector
+                Spacer()
                     .frame(height: ConnectorHeight)
-//                Spacer()
-//                    .frame(height: ConnectorHeight)
             }
         }
     }
     
-    func button(for timeInterval: TimeInterval, delegate: TimelineDelegate) -> some View {
+    func button(for timeInterval: TimeInterval) -> some View {
         Button {
             guard let nextItem = nextItem(to: item) else {
                 return
             }
-            delegate.didTapInterval(between: item, and: nextItem)
+            didTapInterval?(item, nextItem)
         } label: {
             Text(timeInterval.mediumString)
                 .foregroundColor(.accentColor)
